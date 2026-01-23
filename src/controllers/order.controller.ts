@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
 import { OrderRepository } from '@/repositories/order.repository'
 import { ProductRepository } from '@/repositories/product.repository'
+import { OrderItemRepository } from '@/repositories/order-item.repository'
 import { CreateOrderUseCase } from '@/use-cases/order/create-order'
 import { ListOrdersUseCase } from '@/use-cases/order/list-orders'
 import { GetOrderByIdUseCase } from '@/use-cases/order/get-order-by-id'
 import { UpdateOrderStatusUseCase } from '@/use-cases/order/update-order-status'
 import { DeleteOrderUseCase } from '@/use-cases/order/delete-order'
+import { AddItemsToOrderUseCase } from '@/use-cases/order/add-items-to-order'
+import { RemoveItemsFromOrderUseCase } from '@/use-cases/order/remove-items-from-order'
 
 export class OrderController {
   private createOrderUseCase: CreateOrderUseCase
@@ -13,10 +16,13 @@ export class OrderController {
   private getOrderByIdUseCase: GetOrderByIdUseCase
   private updateOrderStatusUseCase: UpdateOrderStatusUseCase
   private deleteOrderUseCase: DeleteOrderUseCase
+  private addItemsToOrderUseCase: AddItemsToOrderUseCase
+  private removeItemsFromOrderUseCase: RemoveItemsFromOrderUseCase
 
   constructor(
     private orderRepository: OrderRepository,
     private productRepository: ProductRepository,
+    private orderItemRepository: OrderItemRepository,
   ) {
     this.createOrderUseCase = new CreateOrderUseCase(
       orderRepository,
@@ -28,6 +34,14 @@ export class OrderController {
       orderRepository,
     )
     this.deleteOrderUseCase = new DeleteOrderUseCase(orderRepository)
+    this.addItemsToOrderUseCase = new AddItemsToOrderUseCase(
+      orderRepository,
+      orderItemRepository,
+    )
+    this.removeItemsFromOrderUseCase = new RemoveItemsFromOrderUseCase(
+      orderRepository,
+      orderItemRepository,
+    )
   }
 
   async create(req: Request, res: Response) {
@@ -158,6 +172,78 @@ export class OrderController {
           return res.status(403).json({ error: error.message })
         }
         return res.status(404).json({ error: error.message })
+      }
+      return res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+
+  async addItems(req: Request, res: Response) {
+    try {
+      const userId = req.user?.id
+      const userType = req.user?.type
+      const clientId = req.user?.clientId
+
+      if (!userId || !userType) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      const order = await this.addItemsToOrderUseCase.execute({
+        orderId: req.params.id as string,
+        items: req.body.items,
+        authenticatedUserId: userId,
+        authenticatedUserType: userType as 'admin' | 'client',
+        authenticatedClientId: clientId,
+      })
+
+      return res.json({
+        message: 'Items added to order successfully',
+        data: order,
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes('You can only')) {
+          return res.status(403).json({ error: error.message })
+        }
+        if (error.message.includes('not found')) {
+          return res.status(404).json({ error: error.message })
+        }
+        return res.status(400).json({ error: error.message })
+      }
+      return res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+
+  async removeItems(req: Request, res: Response) {
+    try {
+      const userId = req.user?.id
+      const userType = req.user?.type
+      const clientId = req.user?.clientId
+
+      if (!userId || !userType) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      const order = await this.removeItemsFromOrderUseCase.execute({
+        orderId: req.params.id as string,
+        itemIds: req.body.itemIds,
+        authenticatedUserId: userId,
+        authenticatedUserType: userType as 'admin' | 'client',
+        authenticatedClientId: clientId,
+      })
+
+      return res.json({
+        message: 'Items removed from order successfully',
+        data: order,
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes('You can only')) {
+          return res.status(403).json({ error: error.message })
+        }
+        if (error.message.includes('not found')) {
+          return res.status(404).json({ error: error.message })
+        }
+        return res.status(400).json({ error: error.message })
       }
       return res.status(500).json({ error: 'Internal server error' })
     }
