@@ -24,7 +24,9 @@ export class OrderController {
     )
     this.listOrdersUseCase = new ListOrdersUseCase(orderRepository)
     this.getOrderByIdUseCase = new GetOrderByIdUseCase(orderRepository)
-    this.updateOrderStatusUseCase = new UpdateOrderStatusUseCase(orderRepository)
+    this.updateOrderStatusUseCase = new UpdateOrderStatusUseCase(
+      orderRepository,
+    )
     this.deleteOrderUseCase = new DeleteOrderUseCase(orderRepository)
   }
 

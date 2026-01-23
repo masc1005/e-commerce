@@ -23,7 +23,10 @@ export class UpdateOrderStatusUseCase {
       throw new Error('Order not found')
     }
 
-    const updatedOrder = await this.orderRepository.updateStatus(orderId, status)
+    const updatedOrder = await this.orderRepository.updateStatus(
+      orderId,
+      status,
+    )
 
     if (!updatedOrder) {
       throw new Error('Failed to update order status')

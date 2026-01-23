@@ -15,11 +15,8 @@ const orderRepository = new OrderRepository()
 const productRepository = new ProductRepository()
 const orderController = new OrderController(orderRepository, productRepository)
 
-router.post(
-  '/',
-  authMiddleware,
-  validate(createOrderSchema),
-  (req, res) => orderController.create(req, res),
+router.post('/', authMiddleware, validate(createOrderSchema), (req, res) =>
+  orderController.create(req, res),
 )
 
 router.get('/', authMiddleware, (req, res) => orderController.list(req, res))

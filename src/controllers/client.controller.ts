@@ -79,8 +79,7 @@ export class ClientController {
 
   async list(req: Request, res: Response) {
     try {
-
-      if(req.user?.type !== "admin") throw new Error("Unathorized")
+      if (req.user?.type !== 'admin') throw new Error('Unathorized')
 
       const clients = await this.listClientsUseCase.execute()
 

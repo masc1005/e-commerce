@@ -28,9 +28,7 @@ export class ClientRepository {
     const [client] = await db
       .select()
       .from(clientsTable)
-      .where(
-        and(eq(clientsTable.id, id), eq(clientsTable.status, 'active')),
-      )
+      .where(and(eq(clientsTable.id, id), eq(clientsTable.status, 'active')))
 
     return client || null
   }
@@ -40,10 +38,7 @@ export class ClientRepository {
       .select()
       .from(clientsTable)
       .where(
-        and(
-          eq(clientsTable.userId, userId),
-          eq(clientsTable.status, 'active'),
-        ),
+        and(eq(clientsTable.userId, userId), eq(clientsTable.status, 'active')),
       )
 
     return client || null
@@ -74,7 +69,7 @@ export class ClientRepository {
   async delete(id: string): Promise<boolean> {
     const result = await db
       .update(clientsTable)
-      .set({status: 'inactive'})
+      .set({ status: 'inactive' })
       .where(eq(clientsTable.id, id))
       .returning()
 
