@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { ClientController } from '@/controllers/client.controller'
 import { ClientRepository } from '@/repositories/client.repository'
+import { UserRepository } from '@/repositories/user.repository'
 import { validate, validateParams } from '@/middlewares/validate.middleware'
 import { authMiddleware } from '@/middlewares/auth.middleware'
 import {
@@ -11,11 +12,11 @@ import { uuidParamSchema } from '@/validators/common.validator'
 
 const router = Router()
 const clientRepository = new ClientRepository()
-const clientController = new ClientController(clientRepository)
+const userRepository = new UserRepository()
+const clientController = new ClientController(clientRepository, userRepository)
 
 router.post(
   '/',
-  authMiddleware,
   validate(createClientSchema),
   (req, res) => clientController.create(req, res),
 )

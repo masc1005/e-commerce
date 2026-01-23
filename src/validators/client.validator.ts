@@ -1,6 +1,7 @@
 import * as yup from 'yup'
 
 export const createClientSchema = yup.object({
+  email: yup.string().email('Invalid email').required('Email is required'),
   name: yup.string().required('Name is required'),
   contact: yup.string().required('Contact is required'),
   address: yup.string().optional(),

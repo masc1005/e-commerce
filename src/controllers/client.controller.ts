@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { ClientRepository } from '@/repositories/client.repository'
+import { UserRepository } from '@/repositories/user.repository'
 import { CreateClientUseCase } from '@/use-cases/client/create-client'
 import { ListClientsUseCase } from '@/use-cases/client/list-clients'
 import { GetClientByIdUseCase } from '@/use-cases/client/get-client-by-id'
@@ -13,8 +14,14 @@ export class ClientController {
   private updateClientUseCase: UpdateClientUseCase
   private deleteClientUseCase: DeleteClientUseCase
 
-  constructor(private clientRepository: ClientRepository) {
-    this.createClientUseCase = new CreateClientUseCase(clientRepository)
+  constructor(
+    private clientRepository: ClientRepository,
+    private userRepository: UserRepository,
+  ) {
+    this.createClientUseCase = new CreateClientUseCase(
+      clientRepository,
+      userRepository,
+    )
     this.listClientsUseCase = new ListClientsUseCase(clientRepository)
     this.getClientByIdUseCase = new GetClientByIdUseCase(clientRepository)
     this.updateClientUseCase = new UpdateClientUseCase(clientRepository)
@@ -23,20 +30,23 @@ export class ClientController {
 
   async create(req: Request, res: Response) {
     try {
-      const userId = req.user?.id
-
-      if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized' })
-      }
-
-      const client = await this.createClientUseCase.execute({
-        userId,
-        ...req.body,
-      })
+      const result = await this.createClientUseCase.execute(req.body)
 
       return res.status(201).json({
         message: 'Client created successfully',
-        data: client,
+        data: {
+          client: {
+            id: result.id,
+            userId: result.userId,
+            name: result.name,
+            contact: result.contact,
+            address: result.address,
+            status: result.status,
+            createdAt: result.createdAt,
+            updatedAt: result.updatedAt,
+          },
+          generatedPassword: result.generatedPassword,
+        },
       })
     } catch (error) {
       if (error instanceof Error) {
