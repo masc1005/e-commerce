@@ -18,10 +18,6 @@ export const createOrderSchema = yup.object({
           .integer()
           .min(1, 'Quantidade deve ser no mínimo 1')
           .required('Quantidade obrigatória'),
-        unitPrice: yup
-          .number()
-          .positive('Preço deve ser positivo')
-          .required('Preço obrigatório'),
       }),
     )
     .min(1, 'Pedido deve ter ao menos 1 item')

@@ -14,7 +14,7 @@ export interface OrderResponseDTO {
   clientId: string
   status: 'received' | 'preparing' | 'dispatched' | 'delivered'
   orderDate: Date
-  total: string
+  total: number
   createdAt: Date
   updatedAt: Date
 }
@@ -24,8 +24,8 @@ export interface OrderItemResponseDTO {
   orderId: string
   productId: string
   quantity: number
-  unitPrice: string
-  subtotal: string
+  unitPrice: number
+  subtotal: number
   createdAt: Date
   updatedAt: Date
 }

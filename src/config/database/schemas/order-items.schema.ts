@@ -15,7 +15,7 @@ export const orderItemsTable = pgTable('order_items', {
   unitPrice: numeric({ precision: 10, scale: 2 }).notNull(),
   subtotal: numeric({ precision: 10, scale: 2 })
     .notNull()
-    .generatedAlwaysAs(sql`quantity * unit_price`),
+    .generatedAlwaysAs(sql`quantity * "unitPrice"`),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp()
     .notNull()
