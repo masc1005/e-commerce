@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { clientsTable } from '@/config/database/schemas'
 import type {
@@ -28,7 +28,9 @@ export class ClientRepository {
     const [client] = await db
       .select()
       .from(clientsTable)
-      .where(eq(clientsTable.id, id))
+      .where(
+        and(eq(clientsTable.id, id), eq(clientsTable.status, 'active')),
+      )
 
     return client || null
   }
@@ -37,13 +39,21 @@ export class ClientRepository {
     const [client] = await db
       .select()
       .from(clientsTable)
-      .where(eq(clientsTable.userId, userId))
+      .where(
+        and(
+          eq(clientsTable.userId, userId),
+          eq(clientsTable.status, 'active'),
+        ),
+      )
 
     return client || null
   }
 
   async list(): Promise<ClientResponseDTO[]> {
-    const clients = await db.select().from(clientsTable)
+    const clients = await db
+      .select()
+      .from(clientsTable)
+      .where(eq(clientsTable.status, 'active'))
 
     return clients
   }
@@ -63,7 +73,8 @@ export class ClientRepository {
 
   async delete(id: string): Promise<boolean> {
     const result = await db
-      .delete(clientsTable)
+      .update(clientsTable)
+      .set({status: 'inactive'})
       .where(eq(clientsTable.id, id))
       .returning()
 
