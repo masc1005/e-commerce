@@ -1,4 +1,5 @@
 import { UserRepository } from '@/repositories'
+import { ClientRepository } from '@/repositories/client.repository'
 import { LoginDTO } from '@/types/user/dto'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -14,7 +15,10 @@ interface LoginResponse {
 }
 
 export class LoginUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private clientRepository: ClientRepository,
+  ) {}
 
   async execute(input: LoginDTO): Promise<LoginResponse> {
     const user = await this.userRepository.findByEmail(input.email)
@@ -29,6 +33,15 @@ export class LoginUserUseCase {
       throw new Error('Invalid credentials')
     }
 
+    let clientId: string | undefined
+
+    if (user.type === 'client') {
+      const client = await this.clientRepository.findByUserId(user.id)
+      if (client) {
+        clientId = client.id
+      }
+    }
+
     const secret =
       process.env.JWT_SECRET || 'default-secret-change-in-production'
     const token = jwt.sign(
@@ -36,6 +49,7 @@ export class LoginUserUseCase {
         id: user.id,
         email: user.email,
         type: user.type,
+        ...(clientId && { clientId }),
       },
       secret,
       { expiresIn: '7d' },

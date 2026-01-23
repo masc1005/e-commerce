@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { UserRepository } from '@/repositories'
+import { ClientRepository } from '@/repositories/client.repository'
 import {
   CreateUserUseCase,
   LoginUserUseCase,
@@ -17,9 +18,15 @@ export class UserController {
   private updateUserUseCase: UpdateUserUseCase
   private deleteUserUseCase: DeleteUserUseCase
 
-  constructor(userRepository: UserRepository) {
+  constructor(
+    userRepository: UserRepository,
+    clientRepository: ClientRepository,
+  ) {
     this.createUserUseCase = new CreateUserUseCase(userRepository)
-    this.loginUserUseCase = new LoginUserUseCase(userRepository)
+    this.loginUserUseCase = new LoginUserUseCase(
+      userRepository,
+      clientRepository,
+    )
     this.listUsersUseCase = new ListUsersUseCase(userRepository)
     this.getUserByIdUseCase = new GetUserByIdUseCase(userRepository)
     this.updateUserUseCase = new UpdateUserUseCase(userRepository)

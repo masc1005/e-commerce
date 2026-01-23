@@ -5,6 +5,7 @@ interface JwtPayload {
   id: string
   email: string
   type: string
+  clientId?: string
 }
 
 declare global {

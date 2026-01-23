@@ -12,7 +12,8 @@ export class UpdateClientUseCase {
   constructor(private clientRepository: ClientRepository) {}
 
   async execute(params: ExecuteParams): Promise<ClientResponseDTO> {
-    const { clientId, data, authenticatedUserId, authenticatedUserType } = params
+    const { clientId, data, authenticatedUserId, authenticatedUserType } =
+      params
 
     const client = await this.clientRepository.findById(clientId)
 
@@ -20,7 +21,10 @@ export class UpdateClientUseCase {
       throw new Error('Client not found')
     }
 
-    if (authenticatedUserType !== 'admin' && client.userId !== authenticatedUserId) {
+    if (
+      authenticatedUserType !== 'admin' &&
+      client.userId !== authenticatedUserId
+    ) {
       throw new Error('You do not have permission to update this client')
     }
 

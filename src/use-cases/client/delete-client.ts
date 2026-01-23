@@ -18,7 +18,10 @@ export class DeleteClientUseCase {
       throw new Error('Client not found')
     }
 
-    if (authenticatedUserType !== 'admin' && client.userId !== authenticatedUserId) {
+    if (
+      authenticatedUserType !== 'admin' &&
+      client.userId !== authenticatedUserId
+    ) {
       throw new Error('You do not have permission to delete this client')
     }
 
