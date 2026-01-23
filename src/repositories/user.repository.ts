@@ -8,6 +8,7 @@ export class UserRepository {
     const [user] = await db
       .insert(usersTable)
       .values({
+        ...(data.id && { id: data.id }),
         name: data.name,
         email: data.email,
         password: data.password,

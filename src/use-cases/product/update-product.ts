@@ -4,6 +4,7 @@ import type { UpdateProductDTO, ProductResponseDTO } from '@/types/product/dto'
 interface ExecuteParams {
   id: string
   data: UpdateProductDTO
+  userId: string
   userType: string
 }
 

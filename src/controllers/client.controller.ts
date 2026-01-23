@@ -36,7 +36,22 @@ export class ClientController {
 
   async create(req: Request, res: Response) {
     try {
-      const result = await this.createClientUseCase.execute(req.body)
+      const userId = req.user?.id
+      const userType = req.user?.type
+
+      if (!userId || !userType) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      if (userType !== 'admin') {
+        return res.status(403).json({ error: 'Only admins can create clients' })
+      }
+
+      const result = await this.createClientUseCase.execute({
+        ...req.body,
+        adminId: userId,
+        adminType: userType,
+      })
 
       return res.status(201).json({
         message: 'Client created successfully',

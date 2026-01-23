@@ -2,6 +2,7 @@ import { ProductRepository } from '@/repositories/product.repository'
 
 interface ExecuteParams {
   id: string
+  userId: string
   userType: string
 }
 

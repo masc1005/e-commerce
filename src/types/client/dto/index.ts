@@ -1,4 +1,5 @@
 export interface CreateClientDTO {
+  id?: string
   userId: string
   name: string
   contact: string

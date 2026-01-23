@@ -9,7 +9,17 @@ import type {
 
 export class ClientRepository {
   async create(data: CreateClientDTO): Promise<ClientResponseDTO> {
-    const [client] = await db.insert(clientsTable).values(data).returning()
+    const [client] = await db
+      .insert(clientsTable)
+      .values({
+        ...(data.id && { id: data.id }),
+        userId: data.userId,
+        name: data.name,
+        contact: data.contact,
+        address: data.address,
+        status: data.status || 'active',
+      })
+      .returning()
 
     return client
   }

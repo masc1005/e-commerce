@@ -3,6 +3,7 @@ import type { CreateProductDTO, ProductResponseDTO } from '@/types/product/dto'
 
 interface ExecuteParams {
   data: CreateProductDTO
+  userId: string
   userType: string
 }
 

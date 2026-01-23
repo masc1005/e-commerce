@@ -23,14 +23,16 @@ export class ProductController {
 
   async create(req: Request, res: Response) {
     try {
+      const userId = req.user?.id
       const userType = req.user?.type
 
-      if (!userType) {
+      if (!userId || !userType) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
       const product = await this.createProductUseCase.execute({
         data: req.body,
+        userId,
         userType,
       })
 
@@ -84,15 +86,17 @@ export class ProductController {
 
   async update(req: Request, res: Response) {
     try {
+      const userId = req.user?.id
       const userType = req.user?.type
 
-      if (!userType) {
+      if (!userId || !userType) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
       const product = await this.updateProductUseCase.execute({
         id: req.params.id as string,
         data: req.body,
+        userId,
         userType,
       })
 
@@ -113,14 +117,16 @@ export class ProductController {
 
   async delete(req: Request, res: Response) {
     try {
+      const userId = req.user?.id
       const userType = req.user?.type
 
-      if (!userType) {
+      if (!userId || !userType) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
       const result = await this.deleteProductUseCase.execute({
         id: req.params.id as string,
+        userId,
         userType,
       })
 

@@ -21,10 +21,7 @@ export class UpdateClientUseCase {
       throw new Error('Client not found')
     }
 
-    if (
-      authenticatedUserType !== 'admin' &&
-      client.userId !== authenticatedUserId
-    ) {
+    if (authenticatedUserType !== 'admin' && clientId !== authenticatedUserId) {
       throw new Error('You do not have permission to update this client')
     }
 

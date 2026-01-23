@@ -16,8 +16,11 @@ const clientRepository = new ClientRepository()
 const userRepository = new UserRepository()
 const clientController = new ClientController(clientRepository, userRepository)
 
-router.post('/', validate(createClientSchema), (req, res) =>
-  clientController.create(req, res),
+router.post(
+  '/',
+  authMiddleware,
+  validate(createClientSchema),
+  (req, res) => clientController.create(req, res),
 )
 
 router.get('/', authMiddleware, (req, res) => clientController.list(req, res))

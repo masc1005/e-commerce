@@ -10,6 +10,8 @@ interface CreateClientRequest {
   contact: string
   address?: string
   status?: 'active' | 'inactive'
+  adminId: string
+  adminType: string
 }
 
 interface CreateClientResponse extends ClientResponseDTO {
@@ -23,6 +25,10 @@ export class CreateClientUseCase {
   ) {}
 
   async execute(data: CreateClientRequest): Promise<CreateClientResponse> {
+    if (data.adminType !== 'admin') {
+      throw new Error('Only admins can create clients')
+    }
+
     const existingUser = await this.userRepository.findByEmail(data.email)
 
     if (existingUser) {
@@ -32,6 +38,8 @@ export class CreateClientUseCase {
     const generatedPassword = crypto.randomBytes(8).toString('hex')
     const hashedPassword = await bcrypt.hash(generatedPassword, 10)
 
+    const userId = crypto.randomUUID()
+
     const user = await this.userRepository.create({
       name: data.name,
       email: data.email,
@@ -40,7 +48,8 @@ export class CreateClientUseCase {
     })
 
     const clientData: CreateClientDTO = {
-      userId: user.id,
+      id: user.id,
+      userId: data.adminId,
       name: data.name,
       contact: data.contact,
       address: data.address,
