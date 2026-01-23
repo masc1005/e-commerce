@@ -5,19 +5,19 @@ import { productsTable } from './products.schema'
 
 export const orderItemsTable = pgTable('order_items', {
   id: uuid().primaryKey().defaultRandom(),
-  orderId: uuid()
+  orderId: uuid('order_id')
     .notNull()
     .references(() => ordersTable.id, { onDelete: 'cascade' }),
-  productId: uuid()
+  productId: uuid('product_id')
     .notNull()
     .references(() => productsTable.id, { onDelete: 'restrict' }),
   quantity: integer().notNull(),
-  unitPrice: numeric({ precision: 10, scale: 2 }).notNull(),
+  unitPrice: numeric('unit_price', { precision: 10, scale: 2 }).notNull(),
   subtotal: numeric({ precision: 10, scale: 2 })
     .notNull()
-    .generatedAlwaysAs(sql`quantity * "unitPrice"`),
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp()
+    .generatedAlwaysAs(sql`quantity * unit_price`),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
     .notNull()
     .defaultNow()
     .$onUpdate(() => sql`now()`),
