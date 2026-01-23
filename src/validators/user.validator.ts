@@ -2,10 +2,19 @@ import * as yup from 'yup'
 
 // Schema para criar usuário
 export const createUserSchema = yup.object({
-  name: yup.string().min(3, 'Nome deve ter no mínimo 3 caracteres').required('Nome obrigatório'),
+  name: yup
+    .string()
+    .min(3, 'Nome deve ter no mínimo 3 caracteres')
+    .required('Nome obrigatório'),
   email: yup.string().email('Email inválido').required('Email obrigatório'),
-  password: yup.string().min(8, 'Senha deve ter no mínimo 8 caracteres').required('Senha obrigatória'),
-  type: yup.string().oneOf(['admin', 'client'], 'Tipo inválido').default('client'),
+  password: yup
+    .string()
+    .min(8, 'Senha deve ter no mínimo 8 caracteres')
+    .required('Senha obrigatória'),
+  type: yup
+    .string()
+    .oneOf(['admin', 'client'], 'Tipo inválido')
+    .default('client'),
 })
 
 // Schema para atualizar usuário

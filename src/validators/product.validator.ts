@@ -2,10 +2,20 @@ import * as yup from 'yup'
 
 // Schema para criar produto
 export const createProductSchema = yup.object({
-  name: yup.string().min(3, 'Nome deve ter no mínimo 3 caracteres').required('Nome obrigatório'),
+  name: yup
+    .string()
+    .min(3, 'Nome deve ter no mínimo 3 caracteres')
+    .required('Nome obrigatório'),
   description: yup.string(),
-  price: yup.number().positive('Preço deve ser positivo').required('Preço obrigatório'),
-  stock: yup.number().integer().min(0, 'Estoque não pode ser negativo').default(0),
+  price: yup
+    .number()
+    .positive('Preço deve ser positivo')
+    .required('Preço obrigatório'),
+  stock: yup
+    .number()
+    .integer()
+    .min(0, 'Estoque não pode ser negativo')
+    .default(0),
 })
 
 // Schema para atualizar produto
