@@ -28,6 +28,12 @@ export class UserRepository {
     return user || null
   }
 
+  async list() {
+    const users = await db.select().from(usersTable)
+
+    return users
+  }
+
   async exists(email: string): Promise<boolean> {
     const user = await this.findByEmail(email)
     return !!user

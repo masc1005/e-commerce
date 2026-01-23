@@ -16,4 +16,8 @@ router.post('/login', validate(loginSchema), (req, res) =>
   userController.login(req, res),
 )
 
+router.get('/list', (req, res) =>
+  userController.list(req, res),
+)
+
 export { router }
