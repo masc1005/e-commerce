@@ -72,7 +72,9 @@ export class UserController {
 
   async getById(req: Request, res: Response) {
     try {
-      const user = await this.getUserByIdUseCase.execute(req.params.id as string)
+      const user = await this.getUserByIdUseCase.execute(
+        req.params.id as string,
+      )
 
       return res.json({
         data: user,
@@ -106,7 +108,9 @@ export class UserController {
 
   async delete(req: Request, res: Response) {
     try {
-      const result = await this.deleteUserUseCase.execute(req.params.id as string)
+      const result = await this.deleteUserUseCase.execute(
+        req.params.id as string,
+      )
 
       return res.json(result)
     } catch (error) {
