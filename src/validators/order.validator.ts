@@ -1,6 +1,5 @@
 import * as yup from 'yup'
 
-// Schema para criar pedido
 export const createOrderSchema = yup.object({
   clientId: yup
     .string()
@@ -29,7 +28,6 @@ export const createOrderSchema = yup.object({
     .required('Itens obrigatórios'),
 })
 
-// Schema para atualizar status do pedido
 export const updateOrderStatusSchema = yup.object({
   status: yup
     .string()
@@ -40,7 +38,6 @@ export const updateOrderStatusSchema = yup.object({
     .required('Status obrigatório'),
 })
 
-// Tipos TypeScript
 export type CreateOrderInput = yup.InferType<typeof createOrderSchema>
 export type UpdateOrderStatusInput = yup.InferType<
   typeof updateOrderStatusSchema

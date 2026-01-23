@@ -13,7 +13,6 @@ const router = Router()
 const clientRepository = new ClientRepository()
 const clientController = new ClientController(clientRepository)
 
-// POST /clients - Criar client
 router.post(
   '/',
   authMiddleware,
@@ -21,10 +20,8 @@ router.post(
   (req, res) => clientController.create(req, res),
 )
 
-// GET /clients - Listar todos os clients
 router.get('/', authMiddleware, (req, res) => clientController.list(req, res))
 
-// GET /clients/:id - Buscar client por ID
 router.get(
   '/:id',
   authMiddleware,
@@ -32,7 +29,6 @@ router.get(
   (req, res) => clientController.getById(req, res),
 )
 
-// PUT /clients/:id - Atualizar client
 router.put(
   '/:id',
   authMiddleware,
@@ -41,7 +37,6 @@ router.put(
   (req, res) => clientController.update(req, res),
 )
 
-// DELETE /clients/:id - Deletar client
 router.delete(
   '/:id',
   authMiddleware,

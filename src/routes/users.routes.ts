@@ -10,20 +10,16 @@ const router = Router()
 const userRepository = new UserRepository()
 const userController = new UserController(userRepository)
 
-// POST /users - Criar usuário
 router.post('/', validate(createUserSchema), (req, res) =>
   userController.create(req, res),
 )
 
-// POST /users/login - Login
 router.post('/login', validate(loginSchema), (req, res) =>
   userController.login(req, res),
 )
 
-// GET /users - Listar todos os usuários
 router.get('/', (req, res) => userController.list(req, res))
 
-// GET /users/:id - Buscar usuário por ID
 router.get(
   '/:id',
   authMiddleware,
@@ -31,7 +27,6 @@ router.get(
   (req, res) => userController.getById(req, res),
 )
 
-// PUT /users/:id - Atualizar usuário
 router.put(
   '/:id',
   authMiddleware,
@@ -40,7 +35,6 @@ router.put(
   (req, res) => userController.update(req, res),
 )
 
-// DELETE /users/:id - Deletar usuário
 router.delete(
   '/:id',
   authMiddleware,

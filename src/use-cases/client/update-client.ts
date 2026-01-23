@@ -20,7 +20,6 @@ export class UpdateClientUseCase {
       throw new Error('Client not found')
     }
 
-    // Cliente só pode editar seus próprios dados, Admin pode editar qualquer um
     if (authenticatedUserType !== 'admin' && client.userId !== authenticatedUserId) {
       throw new Error('You do not have permission to update this client')
     }

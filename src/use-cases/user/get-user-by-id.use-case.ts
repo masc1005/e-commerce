@@ -19,7 +19,6 @@ export class GetUserByIdUseCase {
       throw new Error('User not found')
     }
 
-    // Remover senha do retorno
     const { password: _, ...userWithoutPassword } = user
 
     return userWithoutPassword as GetUserByIdResponse

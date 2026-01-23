@@ -13,7 +13,6 @@ export class CreateClientUseCase {
   constructor(private clientRepository: ClientRepository) {}
 
   async execute(data: CreateClientRequest): Promise<ClientResponseDTO> {
-    // Verificar se já existe um client para este usuário
     const existingClient = await this.clientRepository.findByUserId(data.userId)
 
     if (existingClient) {
