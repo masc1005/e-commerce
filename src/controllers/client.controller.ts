@@ -6,6 +6,7 @@ import { ListClientsUseCase } from '@/use-cases/client/list-clients'
 import { GetClientByIdUseCase } from '@/use-cases/client/get-client-by-id'
 import { UpdateClientUseCase } from '@/use-cases/client/update-client'
 import { DeleteClientUseCase } from '@/use-cases/client/delete-client'
+import { UpdatePasswordUseCase } from '@/use-cases/client/update-password'
 
 export class ClientController {
   private createClientUseCase: CreateClientUseCase
@@ -13,6 +14,7 @@ export class ClientController {
   private getClientByIdUseCase: GetClientByIdUseCase
   private updateClientUseCase: UpdateClientUseCase
   private deleteClientUseCase: DeleteClientUseCase
+  private updatePasswordUseCase: UpdatePasswordUseCase
 
   constructor(
     private clientRepository: ClientRepository,
@@ -26,6 +28,10 @@ export class ClientController {
     this.getClientByIdUseCase = new GetClientByIdUseCase(clientRepository)
     this.updateClientUseCase = new UpdateClientUseCase(clientRepository)
     this.deleteClientUseCase = new DeleteClientUseCase(clientRepository)
+    this.updatePasswordUseCase = new UpdatePasswordUseCase(
+      clientRepository,
+      userRepository,
+    )
   }
 
   async create(req: Request, res: Response) {
@@ -145,6 +151,29 @@ export class ClientController {
     } catch (error) {
       if (error instanceof Error) {
         return res.status(404).json({ error: error.message })
+      }
+      return res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+
+  async updatePassword(req: Request, res: Response) {
+    try {
+      const userId = req.user?.id
+
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      const result = await this.updatePasswordUseCase.execute({
+        currentPassword: req.body.currentPassword,
+        newPassword: req.body.newPassword,
+        authenticatedUserId: userId,
+      })
+
+      return res.json(result)
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).json({ error: error.message })
       }
       return res.status(500).json({ error: 'Internal server error' })
     }

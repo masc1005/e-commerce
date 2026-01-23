@@ -14,3 +14,11 @@ export const updateClientSchema = yup.object({
   address: yup.string().optional(),
   status: yup.string().oneOf(['active', 'inactive']).optional(),
 })
+
+export const updatePasswordSchema = yup.object({
+  currentPassword: yup.string().required('Current password is required'),
+  newPassword: yup
+    .string()
+    .min(8, 'New password must be at least 8 characters')
+    .required('New password is required'),
+})

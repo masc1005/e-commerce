@@ -7,6 +7,7 @@ import { authMiddleware } from '@/middlewares/auth.middleware'
 import {
   createClientSchema,
   updateClientSchema,
+  updatePasswordSchema,
 } from '@/validators/client.validator'
 import { uuidParamSchema } from '@/validators/common.validator'
 
@@ -43,6 +44,13 @@ router.delete(
   authMiddleware,
   validateParams(uuidParamSchema),
   (req, res) => clientController.delete(req, res),
+)
+
+router.patch(
+  '/password',
+  authMiddleware,
+  validate(updatePasswordSchema),
+  (req, res) => clientController.updatePassword(req, res),
 )
 
 export { router }
