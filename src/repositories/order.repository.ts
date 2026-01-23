@@ -171,6 +171,22 @@ export class OrderRepository {
     }
   }
 
+  async updateTotal(id: string): Promise<void> {
+    const items = await db
+      .select()
+      .from(orderItemsTable)
+      .where(eq(orderItemsTable.orderId, id))
+
+    const total = items.reduce((sum, item) => {
+      return sum + parseFloat(item.subtotal)
+    }, 0)
+
+    await db
+      .update(ordersTable)
+      .set({ total: total.toString(), updatedAt: new Date() })
+      .where(eq(ordersTable.id, id))
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await db
       .delete(ordersTable)

@@ -26,23 +26,19 @@ export class RemoveItemsFromOrderUseCase {
       authenticatedClientId,
     } = params
 
-    // Buscar a order
     const order = await this.orderRepository.findById(orderId)
 
     if (!order) {
       throw new Error('Order not found')
     }
 
-    // Verificar se o cliente tem permissão para atualizar esta order
     if (authenticatedUserType === 'client') {
       if (!authenticatedClientId || order.clientId !== authenticatedClientId) {
         throw new Error('You can only update your own orders')
       }
     }
 
-    // Remover os itens
     for (const itemId of itemIds) {
-      // Verificar se o item pertence à ordem
       const item = await this.orderItemRepository.findById(itemId)
 
       if (!item) {
@@ -56,7 +52,8 @@ export class RemoveItemsFromOrderUseCase {
       await this.orderItemRepository.delete(itemId)
     }
 
-    // Retornar a order atualizada com os itens
+    await this.orderRepository.updateTotal(orderId)
+
     const updatedOrder = await this.orderRepository.findByIdWithItems(orderId)
 
     if (!updatedOrder) {

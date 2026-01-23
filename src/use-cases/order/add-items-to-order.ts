@@ -25,21 +25,18 @@ export class AddItemsToOrderUseCase {
     const { orderId, items, authenticatedUserType, authenticatedClientId } =
       params
 
-    // Buscar a order
     const order = await this.orderRepository.findById(orderId)
 
     if (!order) {
       throw new Error('Order not found')
     }
 
-    // Verificar se o cliente tem permissão para atualizar esta order
     if (authenticatedUserType === 'client') {
       if (!authenticatedClientId || order.clientId !== authenticatedClientId) {
         throw new Error('You can only update your own orders')
       }
     }
 
-    // Adicionar os itens
     for (const item of items) {
       await this.orderItemRepository.create({
         orderId,
@@ -48,7 +45,8 @@ export class AddItemsToOrderUseCase {
       })
     }
 
-    // Retornar a order atualizada com os itens
+    await this.orderRepository.updateTotal(orderId)
+
     const updatedOrder = await this.orderRepository.findByIdWithItems(orderId)
 
     if (!updatedOrder) {
