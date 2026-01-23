@@ -1,6 +1,6 @@
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
-import { ordersTable, orderItemsTable } from '@/config/database/schemas'
+import { ordersTable, orderItemsTable, productsTable } from '@/config/database/schemas'
 import type {
   CreateOrderDTO,
   CreateOrderItemDTO,
@@ -11,10 +11,30 @@ import type {
 
 export class OrderRepository {
   async create(data: CreateOrderDTO): Promise<OrderResponseDTO> {
-    const total = data.items.reduce(
-      (sum, item) => sum + item.quantity * item.unitPrice,
-      0,
-    )
+    let total = 0
+    const itemsWithPrices = []
+
+    for (const item of data.items) {
+      const product = await db.query.productsTable.findFirst({
+        where: eq(productsTable.id, item.productId),
+      })
+
+      if (!product) {
+        throw new Error(`Produto ${item.productId} não encontrado`)
+      }
+
+      if (product.stock < item.quantity) {
+        throw new Error(`Estoque insuficiente para o produto ${product.name}`)
+      }
+
+      const unitPrice = parseFloat(product.price)
+      total += item.quantity * unitPrice
+
+      itemsWithPrices.push({
+        ...item,
+        unitPrice,
+      })
+    }
 
     const [order] = await db
       .insert(ordersTable)
@@ -25,13 +45,24 @@ export class OrderRepository {
       })
       .returning()
 
-    for (const item of data.items) {
+    for (const item of itemsWithPrices) {
       await db.insert(orderItemsTable).values({
         orderId: order.id,
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice.toString(),
       })
+
+      const product = await db.query.productsTable.findFirst({
+        where: eq(productsTable.id, item.productId),
+      })
+
+      if (product) {
+        await db
+          .update(productsTable)
+          .set({ stock: product.stock - item.quantity })
+          .where(eq(productsTable.id, item.productId))
+      }
     }
 
     return {

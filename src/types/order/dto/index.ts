@@ -4,9 +4,10 @@ export interface CreateOrderDTO {
 }
 
 export interface CreateOrderItemDTO {
+  orderId: string
   productId: string
   quantity: number
-  unitPrice: number
+  unitPrice?: number
 }
 
 export interface OrderResponseDTO {
