@@ -1,6 +1,6 @@
 export interface CreateOrderDTO {
   clientId: string
-  items: CreateOrderItemDTO[]
+  items: Omit<CreateOrderItemDTO, 'orderId'>[]
 }
 
 export interface CreateOrderItemDTO {
