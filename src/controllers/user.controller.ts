@@ -67,11 +67,12 @@ export class UserController {
 
   async list(req: Request, res: Response) {
     try {
-      const users = await this.listUsersUseCase.execute()
+      const page = req.query.page ? parseInt(req.query.page as string) : undefined
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
 
-      return res.json({
-        data: users,
-      })
+      const result = await this.listUsersUseCase.execute({ page, limit })
+
+      return res.json(result)
     } catch (error) {
       return res.status(500).json({ error: 'Internal server error' })
     }

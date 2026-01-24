@@ -44,7 +44,8 @@ export class OrderItemController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const { orderId, productId, quantity } = req.body
-      const orderItem = await this.createOrderItemUseCase.execute({ orderId, productId, quantity })
+      const userId = req.user?.id as string
+      const orderItem = await this.createOrderItemUseCase.execute({ orderId, productId, quantity }, userId)
       res.status(201).json(orderItem)
     } catch (error) {
       if (error instanceof Error) {

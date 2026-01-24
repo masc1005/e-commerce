@@ -15,13 +15,7 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(params: ExecuteParams): Promise<OrderResponseDTO> {
-    const { data, authenticatedUserId, authenticatedUserType } = params
-
-    if (authenticatedUserType === 'client') {
-      if (data.clientId !== authenticatedUserId) {
-        throw new Error('You can only create orders for yourself')
-      }
-    }
+    const { data } = params
 
     for (const item of data.items) {
       const product = await this.productRepository.findById(item.productId)

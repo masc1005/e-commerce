@@ -14,6 +14,5 @@ server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 server.use('/api', router)
 
 server.listen(process.env.SERVER_PORT, () => {
-  console.log(`Server running on port ${process.env.SERVER_PORT}`)
   console.log(`Swagger docs available at http://localhost:${process.env.SERVER_PORT}/api-docs`)
 })

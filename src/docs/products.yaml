@@ -56,6 +56,22 @@ paths:
       description: Qualquer usuário autenticado pode listar produtos
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Número da página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Quantidade de itens por página
       responses:
         '200':
           description: Lista de produtos
@@ -64,12 +80,25 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     type: array
                     items:
                       $ref: '#/components/schemas/Product'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 100
+                      totalPages:
+                        type: integer
+                        example: 10
 
   /api/products/{id}:
     get:

@@ -1,7 +1,8 @@
 import { db } from '@/config/database/connection'
 import { usersTable } from '@/config/database/schemas'
 import { CreateUserDTO, UpdateUserDTO } from '@/types/user/dto'
-import { eq } from 'drizzle-orm'
+import { PaginationParams, PaginatedResponse } from '@/types/common'
+import { eq, count } from 'drizzle-orm'
 
 export class UserRepository {
   async create(data: CreateUserDTO & { password: string }) {
@@ -39,10 +40,28 @@ export class UserRepository {
     return user || null
   }
 
-  async list() {
-    const users = await db.select().from(usersTable)
+  async list(params?: PaginationParams): Promise<PaginatedResponse<typeof usersTable.$inferSelect>> {
+    const page = params?.page || 1
+    const limit = params?.limit || 10
+    const offset = (page - 1) * limit
 
-    return users
+    const [users, totalResult] = await Promise.all([
+      db.select().from(usersTable).limit(limit).offset(offset),
+      db.select({ count: count() }).from(usersTable),
+    ])
+
+    const total = totalResult[0].count
+    const totalPages = Math.ceil(total / limit)
+
+    return {
+      data: users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    }
   }
 
   async update(id: string, data: UpdateUserDTO & { password?: string }) {

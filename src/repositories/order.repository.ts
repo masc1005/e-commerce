@@ -1,6 +1,7 @@
-import { eq, and } from 'drizzle-orm'
+import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { ordersTable, orderItemsTable, productsTable } from '@/config/database/schemas'
+import { PaginationParams, PaginatedResponse } from '@/types/common'
 import type {
   CreateOrderDTO,
   CreateOrderItemDTO,
@@ -117,35 +118,79 @@ export class OrderRepository {
     }
   }
 
-  async listByClient(clientId: string): Promise<OrderResponseDTO[]> {
-    const orders = await db
-      .select()
-      .from(ordersTable)
-      .where(eq(ordersTable.clientId, clientId))
+  async listByClient(
+    clientId: string,
+    params?: PaginationParams,
+  ): Promise<PaginatedResponse<OrderResponseDTO>> {
+    const page = params?.page || 1
+    const limit = params?.limit || 10
+    const offset = (page - 1) * limit
 
-    return orders.map((order) => ({
-      id: order.id,
-      clientId: order.clientId,
-      status: order.status,
-      orderDate: order.orderDate,
-      total: parseFloat(order.total),
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-    }))
+    const [orders, totalResult] = await Promise.all([
+      db
+        .select()
+        .from(ordersTable)
+        .where(eq(ordersTable.clientId, clientId))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: count() })
+        .from(ordersTable)
+        .where(eq(ordersTable.clientId, clientId)),
+    ])
+
+    const total = totalResult[0].count
+    const totalPages = Math.ceil(total / limit)
+
+    return {
+      data: orders.map((order) => ({
+        id: order.id,
+        clientId: order.clientId,
+        status: order.status,
+        orderDate: order.orderDate,
+        total: parseFloat(order.total),
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    }
   }
 
-  async list(): Promise<OrderResponseDTO[]> {
-    const orders = await db.select().from(ordersTable)
+  async list(params?: PaginationParams): Promise<PaginatedResponse<OrderResponseDTO>> {
+    const page = params?.page || 1
+    const limit = params?.limit || 10
+    const offset = (page - 1) * limit
 
-    return orders.map((order) => ({
-      id: order.id,
-      clientId: order.clientId,
-      status: order.status,
-      orderDate: order.orderDate,
-      total: parseFloat(order.total),
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-    }))
+    const [orders, totalResult] = await Promise.all([
+      db.select().from(ordersTable).limit(limit).offset(offset),
+      db.select({ count: count() }).from(ordersTable),
+    ])
+
+    const total = totalResult[0].count
+    const totalPages = Math.ceil(total / limit)
+
+    return {
+      data: orders.map((order) => ({
+        id: order.id,
+        clientId: order.clientId,
+        status: order.status,
+        orderDate: order.orderDate,
+        total: parseFloat(order.total),
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    }
   }
 
   async updateStatus(

@@ -81,12 +81,12 @@ export class ClientController {
     try {
       if (req.user?.type !== 'admin') throw new Error('Unathorized')
 
-      const clients = await this.listClientsUseCase.execute()
+      const page = req.query.page ? parseInt(req.query.page as string) : undefined
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
 
-      return res.json({
-        message: 'Clients found',
-        data: clients,
-      })
+      const result = await this.listClientsUseCase.execute({ page, limit })
+
+      return res.json(result)
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json({ error: error.message })

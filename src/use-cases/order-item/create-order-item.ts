@@ -10,7 +10,17 @@ export class CreateOrderItemUseCase {
     private orderRepository: OrderRepository,
   ) {}
 
-  async execute(data: CreateOrderItemDTO): Promise<OrderItemResponseDTO> {
+  async execute(data: CreateOrderItemDTO, userId: string): Promise<OrderItemResponseDTO> {
+    const order = await this.orderRepository.findById(data.orderId)
+
+    if (!order) {
+      throw new Error('Pedido não encontrado')
+    }
+
+    if (order.clientId !== userId) {
+      throw new Error('Você não tem permissão para adicionar itens a este pedido')
+    }
+
     const product = await this.productRepository.findById(data.productId)
 
     if (!product) {

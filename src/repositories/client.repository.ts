@@ -1,6 +1,7 @@
-import { eq, and } from 'drizzle-orm'
+import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { clientsTable } from '@/config/database/schemas'
+import { PaginationParams, PaginatedResponse } from '@/types/common'
 import type {
   CreateClientDTO,
   UpdateClientDTO,
@@ -44,13 +45,36 @@ export class ClientRepository {
     return client || null
   }
 
-  async list(): Promise<ClientResponseDTO[]> {
-    const clients = await db
-      .select()
-      .from(clientsTable)
-      .where(eq(clientsTable.status, 'active'))
+  async list(params?: PaginationParams): Promise<PaginatedResponse<ClientResponseDTO>> {
+    const page = params?.page || 1
+    const limit = params?.limit || 10
+    const offset = (page - 1) * limit
 
-    return clients
+    const [clients, totalResult] = await Promise.all([
+      db
+        .select()
+        .from(clientsTable)
+        .where(eq(clientsTable.status, 'active'))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: count() })
+        .from(clientsTable)
+        .where(eq(clientsTable.status, 'active')),
+    ])
+
+    const total = totalResult[0].count
+    const totalPages = Math.ceil(total / limit)
+
+    return {
+      data: clients,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    }
   }
 
   async update(

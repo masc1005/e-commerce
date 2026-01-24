@@ -1,6 +1,7 @@
-import { eq } from 'drizzle-orm'
+import { eq, count } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { productsTable } from '@/config/database/schemas'
+import { PaginationParams, PaginatedResponse } from '@/types/common'
 import type {
   CreateProductDTO,
   UpdateProductDTO,
@@ -39,13 +40,31 @@ export class ProductRepository {
     }
   }
 
-  async list(): Promise<ProductResponseDTO[]> {
-    const products = await db.select().from(productsTable)
+  async list(params?: PaginationParams): Promise<PaginatedResponse<ProductResponseDTO>> {
+    const page = params?.page || 1
+    const limit = params?.limit || 10
+    const offset = (page - 1) * limit
 
-    return products.map((product) => ({
-      ...product,
-      price: parseFloat(product.price),
-    }))
+    const [products, totalResult] = await Promise.all([
+      db.select().from(productsTable).limit(limit).offset(offset),
+      db.select({ count: count() }).from(productsTable),
+    ])
+
+    const total = totalResult[0].count
+    const totalPages = Math.ceil(total / limit)
+
+    return {
+      data: products.map((product) => ({
+        ...product,
+        price: parseFloat(product.price),
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    }
   }
 
   async update(

@@ -39,8 +39,14 @@ export class OrderController {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
+      const orderData = { ...req.body }
+      
+      if (userType !== 'admin') {
+        orderData.clientId = userId
+      }
+
       const order = await this.createOrderUseCase.execute({
-        data: req.body,
+        data: orderData,
         authenticatedUserId: userId,
         authenticatedUserType: userType,
       })
@@ -66,15 +72,16 @@ export class OrderController {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
-      const orders = await this.listOrdersUseCase.execute({
+      const page = req.query.page ? parseInt(req.query.page as string) : undefined
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
+
+      const result = await this.listOrdersUseCase.execute({
         authenticatedUserId: userId,
         authenticatedUserType: userType,
+        pagination: { page, limit },
       })
 
-      return res.json({
-        message: 'Orders found',
-        data: orders,
-      })
+      return res.json(result)
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json({ error: error.message })

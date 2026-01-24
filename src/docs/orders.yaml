@@ -64,6 +64,22 @@ paths:
       description: Admin lista todos os pedidos. Cliente vê apenas seus próprios pedidos.
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Número da página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Quantidade de itens por página
       responses:
         '200':
           description: Lista de pedidos
@@ -72,12 +88,25 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     type: array
                     items:
                       $ref: '#/components/schemas/Order'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 30
+                      totalPages:
+                        type: integer
+                        example: 3
 
   /api/orders/{id}:
     get:

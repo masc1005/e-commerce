@@ -53,12 +53,12 @@ export class ProductController {
 
   async list(req: Request, res: Response) {
     try {
-      const products = await this.listProductsUseCase.execute()
+      const page = req.query.page ? parseInt(req.query.page as string) : undefined
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
 
-      return res.json({
-        message: 'Products found',
-        data: products,
-      })
+      const result = await this.listProductsUseCase.execute({ page, limit })
+
+      return res.json(result)
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json({ error: error.message })
