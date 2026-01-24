@@ -89,4 +89,11 @@ export class ProductRepository {
 
     return !!product
   }
+
+  async updateStock(id: string, newStock: number): Promise<void> {
+    await db
+      .update(productsTable)
+      .set({ stock: newStock })
+      .where(eq(productsTable.id, id))
+  }
 }

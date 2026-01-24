@@ -1,8 +1,10 @@
 import { OrderItemRepository } from '@/repositories/order-item.repository'
 import { OrderItemResponseDTO } from '@/types'
 
-const orderItemRepository = new OrderItemRepository()
+export class ListOrderItemsUseCase {
+  constructor(private orderItemRepository: OrderItemRepository) {}
 
-export async function listOrderItems(): Promise<OrderItemResponseDTO[]> {
-  return await orderItemRepository.findAll()
+  async execute(): Promise<OrderItemResponseDTO[]> {
+    return await this.orderItemRepository.findAll()
+  }
 }

@@ -20,7 +20,7 @@ router.post('/login', validate(loginSchema), (req, res) =>
   userController.login(req, res),
 )
 
-router.get('/', (req, res) => userController.list(req, res))
+router.get('/', authMiddleware, (req, res) => userController.list(req, res))
 
 router.get(
   '/:id',

@@ -1,37 +1,27 @@
 import { db } from '@/config/database/connection'
 import { orderItemsTable } from '@/config/database/schemas'
 import { productsTable } from '@/config/database/schemas/products.schema'
-import { CreateOrderItemDTO, OrderItemResponseDTO } from '@/types'
+import { OrderItemResponseDTO } from '@/types'
 import { eq } from 'drizzle-orm'
 
+interface CreateOrderItemRepositoryDTO {
+  orderId: string
+  productId: string
+  quantity: number
+  unitPrice: string
+}
+
 export class OrderItemRepository {
-  async create(data: CreateOrderItemDTO): Promise<OrderItemResponseDTO> {
-    const product = await db.query.productsTable.findFirst({
-      where: eq(productsTable.id, data.productId),
-    })
-
-    if (!product) {
-      throw new Error('Produto não encontrado')
-    }
-
-    if (product.stock < data.quantity) {
-      throw new Error('Estoque insuficiente')
-    }
-
+  async create(data: CreateOrderItemRepositoryDTO): Promise<OrderItemResponseDTO> {
     const [orderItem] = await db
       .insert(orderItemsTable)
       .values({
         orderId: data.orderId,
         productId: data.productId,
         quantity: data.quantity,
-        unitPrice: product.price.toString(),
+        unitPrice: data.unitPrice,
       })
       .returning()
-
-    await db
-      .update(productsTable)
-      .set({ stock: product.stock - data.quantity })
-      .where(eq(productsTable.id, data.productId))
 
     return {
       id: orderItem.id,
@@ -85,42 +75,13 @@ export class OrderItemRepository {
     id: string,
     quantity: number,
   ): Promise<OrderItemResponseDTO | null> {
-    const orderItem = await this.findById(id)
-    if (!orderItem) {
-      return null
-    }
-
-    const product = await db.query.productsTable.findFirst({
-      where: eq(productsTable.id, orderItem.productId),
-    })
-
-    if (!product) {
-      throw new Error('Produto não encontrado')
-    }
-
-    const quantityDifference = quantity - orderItem.quantity
-
-    if (quantityDifference > 0) {
-      if (product.stock < quantityDifference) {
-        throw new Error('Estoque insuficiente')
-      }
-
-      await db
-        .update(productsTable)
-        .set({ stock: product.stock - quantityDifference })
-        .where(eq(productsTable.id, orderItem.productId))
-    } else if (quantityDifference < 0) {
-      await db
-        .update(productsTable)
-        .set({ stock: product.stock + Math.abs(quantityDifference) })
-        .where(eq(productsTable.id, orderItem.productId))
-    }
-
     const [updated] = await db
       .update(orderItemsTable)
       .set({ quantity })
       .where(eq(orderItemsTable.id, id))
       .returning()
+
+    if (!updated) return null
 
     return {
       id: updated.id,
@@ -135,24 +96,7 @@ export class OrderItemRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const orderItem = await this.findById(id)
-    if (!orderItem) {
-      return false
-    }
-
-    const product = await db.query.productsTable.findFirst({
-      where: eq(productsTable.id, orderItem.productId),
-    })
-
-    if (product) {
-      await db
-        .update(productsTable)
-        .set({ stock: product.stock + orderItem.quantity })
-        .where(eq(productsTable.id, orderItem.productId))
-    }
-
-    await db.delete(orderItemsTable).where(eq(orderItemsTable.id, id))
-
-    return true
+    const result = await db.delete(orderItemsTable).where(eq(orderItemsTable.id, id)).returning()
+    return result.length > 0
   }
 }

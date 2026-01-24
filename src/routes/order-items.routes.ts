@@ -1,5 +1,8 @@
 import { Router } from 'express'
 import { OrderItemController } from '@/controllers/order-item.controller'
+import { OrderItemRepository } from '@/repositories/order-item.repository'
+import { ProductRepository } from '@/repositories/product.repository'
+import { OrderRepository } from '@/repositories/order.repository'
 import { authMiddleware } from '@/middlewares/auth.middleware'
 import { validate, validateParams } from '@/middlewares/validate.middleware'
 import {
@@ -9,26 +12,31 @@ import {
 import { uuidParamSchema } from '@/validators/common.validator'
 
 const router = Router()
-const orderItemController = new OrderItemController()
+const orderItemRepository = new OrderItemRepository()
+const productRepository = new ProductRepository()
+const orderRepository = new OrderRepository()
+const orderItemController = new OrderItemController(
+  orderItemRepository,
+  productRepository,
+  orderRepository,
+)
 
 router.post(
   '/',
   authMiddleware,
   validate(createOrderItemSchema),
-  orderItemController.create.bind(orderItemController),
+  (req, res) => orderItemController.create(req, res),
 )
 
-router.get(
-  '/',
-  authMiddleware,
-  orderItemController.list.bind(orderItemController),
+router.get('/', authMiddleware, (req, res) =>
+  orderItemController.list(req, res),
 )
 
 router.get(
   '/:id',
   authMiddleware,
   validateParams(uuidParamSchema),
-  orderItemController.getById.bind(orderItemController),
+  (req, res) => orderItemController.getById(req, res),
 )
 
 router.put(
@@ -36,14 +44,14 @@ router.put(
   authMiddleware,
   validateParams(uuidParamSchema),
   validate(updateOrderItemSchema),
-  orderItemController.update.bind(orderItemController),
+  (req, res) => orderItemController.update(req, res),
 )
 
 router.delete(
   '/:id',
   authMiddleware,
   validateParams(uuidParamSchema),
-  orderItemController.delete.bind(orderItemController),
+  (req, res) => orderItemController.delete(req, res),
 )
 
 export default router
