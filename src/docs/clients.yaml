@@ -1,0 +1,230 @@
+paths:
+  /api/clients:
+    post:
+      tags:
+        - Clients
+      summary: Criar novo cliente
+      description: Apenas admins podem criar clientes. Uma senha aleatória é gerada automaticamente.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - name
+                - cpf
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: cliente@example.com
+                name:
+                  type: string
+                  example: João Silva
+                cpf:
+                  type: string
+                  example: 12345678900
+                phone:
+                  type: string
+                  example: '11999999999'
+                address:
+                  type: string
+                  example: Rua Exemplo, 123
+      responses:
+        '201':
+          description: Cliente criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      client:
+                        $ref: '#/components/schemas/Client'
+                      user:
+                        $ref: '#/components/schemas/User'
+                      generatedPassword:
+                        type: string
+                        example: abc123xyz
+        '403':
+          description: Apenas admins podem criar clientes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Clients
+      summary: Listar clientes
+      description: Admin lista todos os clientes. Cliente vê apenas seus próprios dados.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Client'
+
+  /api/clients/{id}:
+    get:
+      tags:
+        - Clients
+      summary: Buscar cliente por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Client'
+        '404':
+          description: Cliente não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Clients
+      summary: Atualizar cliente
+      description: Admin pode atualizar qualquer cliente. Cliente pode atualizar apenas seus próprios dados.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                cpf:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+      responses:
+        '200':
+          description: Cliente atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Client'
+
+    delete:
+      tags:
+        - Clients
+      summary: Deletar cliente
+      description: Apenas admins podem deletar clientes
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Cliente deletado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '403':
+          description: Apenas admins podem deletar clientes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/clients/password:
+    patch:
+      tags:
+        - Clients
+      summary: Atualizar senha do cliente
+      description: Cliente pode atualizar sua própria senha
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - currentPassword
+                - newPassword
+              properties:
+                currentPassword:
+                  type: string
+                  example: senha_atual
+                newPassword:
+                  type: string
+                  minLength: 6
+                  example: nova_senha123
+      responses:
+        '200':
+          description: Senha atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Senha atual incorreta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

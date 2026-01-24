@@ -1,0 +1,161 @@
+paths:
+  /api/order-items:
+    post:
+      tags:
+        - Order Items
+      summary: Adicionar item a um pedido
+      description: Adiciona um novo item a um pedido existente. Estoque é reduzido e total do pedido é recalculado automaticamente.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - orderId
+                - productId
+                - quantity
+              properties:
+                orderId:
+                  type: string
+                  format: uuid
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                productId:
+                  type: string
+                  format: uuid
+                  example: 987e6543-e21b-32d1-a654-426614174999
+                quantity:
+                  type: integer
+                  minimum: 1
+                  example: 3
+      responses:
+        '201':
+          description: Item adicionado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderItem'
+        '400':
+          description: Estoque insuficiente ou produto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Order Items
+      summary: Listar todos os itens de pedidos
+      description: Lista todos os itens de todos os pedidos (principalmente para fins administrativos)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de itens de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderItem'
+
+  /api/order-items/{id}:
+    get:
+      tags:
+        - Order Items
+      summary: Buscar item de pedido por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Item encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderItem'
+        '404':
+          description: Item não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Order Items
+      summary: Atualizar quantidade de um item
+      description: Atualiza a quantidade de um item. Estoque é ajustado e total do pedido é recalculado automaticamente.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+                  example: 5
+      responses:
+        '200':
+          description: Quantidade atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderItem'
+        '400':
+          description: Estoque insuficiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Item não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Order Items
+      summary: Remover item de um pedido
+      description: Remove um item do pedido. Estoque é restaurado e total do pedido é recalculado automaticamente.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Item removido com sucesso
+        '404':
+          description: Item não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
