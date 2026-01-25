@@ -47,7 +47,10 @@ export class ProductRepository {
     }
   }
 
-  async list(params?: PaginationParams, filters?: ProductFilters): Promise<PaginatedResponse<ProductResponseDTO>> {
+  async list(
+    params?: PaginationParams,
+    filters?: ProductFilters,
+  ): Promise<PaginatedResponse<ProductResponseDTO>> {
     const page = params?.page || 1
     const limit = params?.limit || 10
     const offset = (page - 1) * limit
@@ -78,7 +81,12 @@ export class ProductRepository {
 
     const [products, totalResult] = await Promise.all([
       whereClause
-        ? db.select().from(productsTable).where(whereClause).limit(limit).offset(offset)
+        ? db
+            .select()
+            .from(productsTable)
+            .where(whereClause)
+            .limit(limit)
+            .offset(offset)
         : db.select().from(productsTable).limit(limit).offset(offset),
       whereClause
         ? db.select({ count: count() }).from(productsTable).where(whereClause)

@@ -67,8 +67,12 @@ export class UserController {
 
   async list(req: Request, res: Response) {
     try {
-      const page = req.query.page ? parseInt(req.query.page as string) : undefined
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
+      const page = req.query.page
+        ? parseInt(req.query.page as string)
+        : undefined
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string)
+        : undefined
 
       const result = await this.listUsersUseCase.execute({ page, limit })
 

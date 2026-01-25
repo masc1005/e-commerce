@@ -45,7 +45,9 @@ export class ClientRepository {
     return client || null
   }
 
-  async list(params?: PaginationParams): Promise<PaginatedResponse<ClientResponseDTO>> {
+  async list(
+    params?: PaginationParams,
+  ): Promise<PaginatedResponse<ClientResponseDTO>> {
     const page = params?.page || 1
     const limit = params?.limit || 10
     const offset = (page - 1) * limit

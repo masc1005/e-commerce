@@ -63,9 +63,7 @@ describe('CreateOrderUseCase', () => {
     const result = await createOrderUseCase.execute({
       data: {
         clientId: 'client-id',
-        items: [
-          { productId: 'product-1', quantity: 2 },
-        ],
+        items: [{ productId: 'product-1', quantity: 2 }],
       },
       authenticatedUserId: 'admin-id',
       authenticatedUserType: 'admin',

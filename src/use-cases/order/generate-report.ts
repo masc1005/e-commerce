@@ -20,11 +20,15 @@ export class GenerateOrderReportUseCase {
     if (startDate) filters.startDate = startDate
     if (endDate) filters.endDate = endDate
 
-    const result = await this.orderRepository.list({ page: 1, limit: 10000 }, filters)
+    const result = await this.orderRepository.list(
+      { page: 1, limit: 10000 },
+      filters,
+    )
     const orders = result.data
 
     // CSV Header
-    let csv = 'ID,Cliente ID,Status,Data do Pedido,Total,Criado em,Atualizado em\n'
+    let csv =
+      'ID,Cliente ID,Status,Data do Pedido,Total,Criado em,Atualizado em\n'
 
     // CSV Rows
     for (const order of orders) {

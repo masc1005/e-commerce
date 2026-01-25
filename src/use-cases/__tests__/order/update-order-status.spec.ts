@@ -42,7 +42,10 @@ describe('UpdateOrderStatusUseCase', () => {
     })
 
     expect(result).toEqual(mockOrder)
-    expect(orderRepository.updateStatus).toHaveBeenCalledWith('order-id', 'preparing')
+    expect(orderRepository.updateStatus).toHaveBeenCalledWith(
+      'order-id',
+      'preparing',
+    )
   })
 
   it('should throw error when user is not admin', async () => {

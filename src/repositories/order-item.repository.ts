@@ -12,7 +12,9 @@ interface CreateOrderItemRepositoryDTO {
 }
 
 export class OrderItemRepository {
-  async create(data: CreateOrderItemRepositoryDTO): Promise<OrderItemResponseDTO> {
+  async create(
+    data: CreateOrderItemRepositoryDTO,
+  ): Promise<OrderItemResponseDTO> {
     const [orderItem] = await db
       .insert(orderItemsTable)
       .values({
@@ -96,7 +98,10 @@ export class OrderItemRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await db.delete(orderItemsTable).where(eq(orderItemsTable.id, id)).returning()
+    const result = await db
+      .delete(orderItemsTable)
+      .where(eq(orderItemsTable.id, id))
+      .returning()
     return result.length > 0
   }
 }

@@ -40,7 +40,9 @@ export class UserRepository {
     return user || null
   }
 
-  async list(params?: PaginationParams): Promise<PaginatedResponse<typeof usersTable.$inferSelect>> {
+  async list(
+    params?: PaginationParams,
+  ): Promise<PaginatedResponse<typeof usersTable.$inferSelect>> {
     const page = params?.page || 1
     const limit = params?.limit || 10
     const offset = (page - 1) * limit

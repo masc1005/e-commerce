@@ -1,6 +1,10 @@
 import { eq, and, count, gte, lte } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
-import { ordersTable, orderItemsTable, productsTable } from '@/config/database/schemas'
+import {
+  ordersTable,
+  orderItemsTable,
+  productsTable,
+} from '@/config/database/schemas'
 import { PaginationParams, PaginatedResponse } from '@/types/common'
 import type {
   CreateOrderDTO,
@@ -167,7 +171,10 @@ export class OrderRepository {
     }
   }
 
-  async list(params?: PaginationParams, filters?: OrderFilters): Promise<PaginatedResponse<OrderResponseDTO>> {
+  async list(
+    params?: PaginationParams,
+    filters?: OrderFilters,
+  ): Promise<PaginatedResponse<OrderResponseDTO>> {
     const page = params?.page || 1
     const limit = params?.limit || 10
     const offset = (page - 1) * limit
@@ -190,7 +197,12 @@ export class OrderRepository {
 
     const [orders, totalResult] = await Promise.all([
       whereClause
-        ? db.select().from(ordersTable).where(whereClause).limit(limit).offset(offset)
+        ? db
+            .select()
+            .from(ordersTable)
+            .where(whereClause)
+            .limit(limit)
+            .offset(offset)
         : db.select().from(ordersTable).limit(limit).offset(offset),
       whereClause
         ? db.select({ count: count() }).from(ordersTable).where(whereClause)

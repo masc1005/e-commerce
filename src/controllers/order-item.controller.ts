@@ -28,7 +28,9 @@ export class OrderItemController {
       orderRepository,
     )
     this.listOrderItemsUseCase = new ListOrderItemsUseCase(orderItemRepository)
-    this.getOrderItemByIdUseCase = new GetOrderItemByIdUseCase(orderItemRepository)
+    this.getOrderItemByIdUseCase = new GetOrderItemByIdUseCase(
+      orderItemRepository,
+    )
     this.updateOrderItemUseCase = new UpdateOrderItemUseCase(
       orderItemRepository,
       productRepository,
@@ -45,7 +47,10 @@ export class OrderItemController {
     try {
       const { orderId, productId, quantity } = req.body
       const userId = req.user?.id as string
-      const orderItem = await this.createOrderItemUseCase.execute({ orderId, productId, quantity }, userId)
+      const orderItem = await this.createOrderItemUseCase.execute(
+        { orderId, productId, quantity },
+        userId,
+      )
       res.status(201).json(orderItem)
     } catch (error) {
       if (error instanceof Error) {

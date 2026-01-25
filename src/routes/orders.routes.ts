@@ -13,10 +13,7 @@ import { uuidParamSchema } from '@/validators/common.validator'
 const router = Router()
 const orderRepository = new OrderRepository()
 const productRepository = new ProductRepository()
-const orderController = new OrderController(
-  orderRepository,
-  productRepository,
-)
+const orderController = new OrderController(orderRepository, productRepository)
 
 router.post('/', authMiddleware, validate(createOrderSchema), (req, res) =>
   orderController.create(req, res),

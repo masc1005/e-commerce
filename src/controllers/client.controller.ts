@@ -81,8 +81,12 @@ export class ClientController {
     try {
       if (req.user?.type !== 'admin') throw new Error('Unathorized')
 
-      const page = req.query.page ? parseInt(req.query.page as string) : undefined
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
+      const page = req.query.page
+        ? parseInt(req.query.page as string)
+        : undefined
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string)
+        : undefined
 
       const result = await this.listClientsUseCase.execute({ page, limit })
 

@@ -6,7 +6,8 @@ const options: swaggerJsdoc.Options = {
     info: {
       title: 'E-Commerce API',
       version: '1.0.0',
-      description: 'API completa para gerenciamento de e-commerce com sistema de pedidos, produtos, clientes e autenticação JWT',
+      description:
+        'API completa para gerenciamento de e-commerce com sistema de pedidos, produtos, clientes e autenticação JWT',
       contact: {
         name: 'API Support',
       },
@@ -23,7 +24,8 @@ const options: swaggerJsdoc.Options = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-          description: 'Autenticação via JWT Token. Use o endpoint /users/login para obter o token.',
+          description:
+            'Autenticação via JWT Token. Use o endpoint /users/login para obter o token.',
         },
       },
       schemas: {
@@ -67,7 +69,10 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: { type: 'string', format: 'uuid' },
             clientId: { type: 'string', format: 'uuid' },
-            status: { type: 'string', enum: ['received', 'preparing', 'dispatched', 'delivered'] },
+            status: {
+              type: 'string',
+              enum: ['received', 'preparing', 'dispatched', 'delivered'],
+            },
             orderDate: { type: 'string', format: 'date-time' },
             total: { type: 'number', format: 'float' },
             createdAt: { type: 'string', format: 'date-time' },
@@ -96,7 +101,10 @@ const options: swaggerJsdoc.Options = {
       },
     },
     tags: [
-      { name: 'Users', description: 'Gerenciamento de usuários e autenticação' },
+      {
+        name: 'Users',
+        description: 'Gerenciamento de usuários e autenticação',
+      },
       { name: 'Clients', description: 'Gerenciamento de clientes' },
       { name: 'Products', description: 'Gerenciamento de produtos' },
       { name: 'Orders', description: 'Gerenciamento de pedidos' },

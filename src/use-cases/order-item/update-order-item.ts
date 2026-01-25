@@ -10,7 +10,10 @@ export class UpdateOrderItemUseCase {
     private orderRepository: OrderRepository,
   ) {}
 
-  async execute(id: string, quantity: number): Promise<OrderItemResponseDTO | null> {
+  async execute(
+    id: string,
+    quantity: number,
+  ): Promise<OrderItemResponseDTO | null> {
     const orderItem = await this.orderItemRepository.findById(id)
     if (!orderItem) {
       return null

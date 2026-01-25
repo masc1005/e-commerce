@@ -11,7 +11,9 @@ interface ListUsersResponse {
 export class ListUsersUseCase {
   constructor(private userRepository: UserRepository) {}
 
-  async execute(params?: PaginationParams): Promise<PaginatedResponse<ListUsersResponse>> {
+  async execute(
+    params?: PaginationParams,
+  ): Promise<PaginatedResponse<ListUsersResponse>> {
     const result = await this.userRepository.list(params)
 
     return {

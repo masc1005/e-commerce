@@ -12,13 +12,19 @@ interface ExecuteParams {
 export class ListOrdersUseCase {
   constructor(private orderRepository: OrderRepository) {}
 
-  async execute(params: ExecuteParams): Promise<PaginatedResponse<OrderResponseDTO>> {
-    const { authenticatedUserId, authenticatedUserType, pagination, filters } = params
+  async execute(
+    params: ExecuteParams,
+  ): Promise<PaginatedResponse<OrderResponseDTO>> {
+    const { authenticatedUserId, authenticatedUserType, pagination, filters } =
+      params
 
     if (authenticatedUserType === 'admin') {
       return await this.orderRepository.list(pagination, filters)
     }
 
-    return await this.orderRepository.listByClient(authenticatedUserId, pagination)
+    return await this.orderRepository.listByClient(
+      authenticatedUserId,
+      pagination,
+    )
   }
 }

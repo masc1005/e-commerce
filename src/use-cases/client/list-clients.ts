@@ -5,7 +5,9 @@ import type { ClientResponseDTO } from '@/types/client/dto'
 export class ListClientsUseCase {
   constructor(private clientRepository: ClientRepository) {}
 
-  async execute(params?: PaginationParams): Promise<PaginatedResponse<ClientResponseDTO>> {
+  async execute(
+    params?: PaginationParams,
+  ): Promise<PaginatedResponse<ClientResponseDTO>> {
     return await this.clientRepository.list(params)
   }
 }

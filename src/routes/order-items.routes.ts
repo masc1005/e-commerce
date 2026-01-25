@@ -21,11 +21,8 @@ const orderItemController = new OrderItemController(
   orderRepository,
 )
 
-router.post(
-  '/',
-  authMiddleware,
-  validate(createOrderItemSchema),
-  (req, res) => orderItemController.create(req, res),
+router.post('/', authMiddleware, validate(createOrderItemSchema), (req, res) =>
+  orderItemController.create(req, res),
 )
 
 router.get('/', authMiddleware, (req, res) =>

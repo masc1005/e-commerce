@@ -30,7 +30,9 @@ export class OrderController {
       orderRepository,
     )
     this.deleteOrderUseCase = new DeleteOrderUseCase(orderRepository)
-    this.generateOrderReportUseCase = new GenerateOrderReportUseCase(orderRepository)
+    this.generateOrderReportUseCase = new GenerateOrderReportUseCase(
+      orderRepository,
+    )
   }
 
   async create(req: Request, res: Response) {
@@ -43,7 +45,7 @@ export class OrderController {
       }
 
       const orderData = { ...req.body }
-      
+
       if (userType !== 'admin') {
         orderData.clientId = userId
       }
@@ -75,19 +77,23 @@ export class OrderController {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
-      const page = req.query.page ? parseInt(req.query.page as string) : undefined
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
+      const page = req.query.page
+        ? parseInt(req.query.page as string)
+        : undefined
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string)
+        : undefined
 
       const filters: any = {}
-      
+
       if (req.query.clientId) {
         filters.clientId = req.query.clientId as string
       }
-      
+
       if (req.query.startDate) {
         filters.startDate = new Date(req.query.startDate as string)
       }
-      
+
       if (req.query.endDate) {
         filters.endDate = new Date(req.query.endDate as string)
       }
@@ -196,8 +202,12 @@ export class OrderController {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
-      const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined
-      const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined
+      const startDate = req.query.startDate
+        ? new Date(req.query.startDate as string)
+        : undefined
+      const endDate = req.query.endDate
+        ? new Date(req.query.endDate as string)
+        : undefined
 
       const csv = await this.generateOrderReportUseCase.execute({
         startDate,
@@ -206,12 +216,12 @@ export class OrderController {
       })
 
       const filename = `orders-report-${new Date().toISOString().split('T')[0]}.csv`
-      
+
       res.setHeader('Content-Type', 'text/csv; charset=utf-8')
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
       res.setHeader('Cache-Control', 'no-cache')
       res.setHeader('Pragma', 'no-cache')
-      
+
       return res.status(200).send(csv)
     } catch (error) {
       if (error instanceof Error) {
