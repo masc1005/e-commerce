@@ -72,6 +72,32 @@ paths:
             maximum: 100
             default: 10
           description: Quantidade de itens por página
+        - in: query
+          name: name
+          schema:
+            type: string
+            example: 'notebook'
+          description: Filtrar por nome do produto (busca parcial)
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+            minimum: 0
+            example: 100
+          description: Preço mínimo
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+            minimum: 0
+            example: 500
+          description: Preço máximo
+        - in: query
+          name: inStock
+          schema:
+            type: boolean
+            example: true
+          description: Filtrar produtos em estoque (true) ou sem estoque (false)
       responses:
         '200':
           description: Lista de produtos

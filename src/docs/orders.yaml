@@ -80,6 +80,27 @@ paths:
             maximum: 100
             default: 10
           description: Quantidade de itens por página
+        - in: query
+          name: clientId
+          schema:
+            type: string
+            format: uuid
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          description: Filtrar por cliente (apenas para admin)
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+            example: '2026-01-01'
+          description: Data inicial do período (formato YYYY-MM-DD)
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+            example: '2026-01-31'
+          description: Data final do período (formato YYYY-MM-DD)
       responses:
         '200':
           description: Lista de pedidos
@@ -107,6 +128,51 @@ paths:
                       totalPages:
                         type: integer
                         example: 3
+
+  /api/orders/report/csv:
+    get:
+      tags:
+        - Orders
+      summary: Gerar relatório CSV de pedidos
+      description: Apenas admins podem gerar relatórios. Retorna um arquivo CSV para download com os pedidos filtrados por período.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+            example: '2026-01-01'
+          description: Data inicial do período (formato YYYY-MM-DD)
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+            example: '2026-01-31'
+          description: Data final do período (formato YYYY-MM-DD)
+      responses:
+        '200':
+          description: Arquivo CSV gerado com sucesso
+          content:
+            text/csv:
+              schema:
+                type: string
+                example: |
+                  ID,Cliente ID,Status,Data do Pedido,Total,Criado em,Atualizado em
+                  123e4567-e89b-12d3-a456-426614174000,987e6543-e21b-32d1-a654-426614174999,received,2026-01-15T10:00:00Z,150.00,2026-01-15T10:00:00Z,2026-01-15T10:00:00Z
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="orders-report-2026-01-24.csv"'
+        '403':
+          description: Apenas admins podem gerar relatórios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/orders/{id}:
     get:
