@@ -48,6 +48,16 @@ describe('CreateOrderItemUseCase', () => {
   })
 
   it('deve criar um item de pedido com sucesso', async () => {
+    const mockOrder = {
+      id: 'order-id',
+      clientId: 'client-id',
+      status: 'received' as const,
+      orderDate: new Date(),
+      total: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
     const mockProduct = {
       id: 'product-id',
       name: 'Produto Teste',
@@ -69,6 +79,7 @@ describe('CreateOrderItemUseCase', () => {
       updatedAt: new Date(),
     }
 
+    vi.mocked(orderRepository.findById).mockResolvedValue(mockOrder)
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
     vi.mocked(orderItemRepository.create).mockResolvedValue(mockOrderItem)
 
@@ -76,7 +87,7 @@ describe('CreateOrderItemUseCase', () => {
       orderId: 'order-id',
       productId: 'product-id',
       quantity: 2,
-    })
+    }, 'client-id')
 
     expect(productRepository.findById).toHaveBeenCalledWith('product-id')
     expect(orderItemRepository.create).toHaveBeenCalledWith({
@@ -91,6 +102,17 @@ describe('CreateOrderItemUseCase', () => {
   })
 
   it('deve lançar erro quando produto não existe', async () => {
+    const mockOrder = {
+      id: 'order-id',
+      clientId: 'client-id',
+      status: 'received' as const,
+      orderDate: new Date(),
+      total: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    vi.mocked(orderRepository.findById).mockResolvedValue(mockOrder)
     vi.mocked(productRepository.findById).mockResolvedValue(null)
 
     await expect(
@@ -98,7 +120,7 @@ describe('CreateOrderItemUseCase', () => {
         orderId: 'order-id',
         productId: 'product-id',
         quantity: 2,
-      }),
+      }, 'client-id'),
     ).rejects.toThrow('Produto não encontrado')
 
     expect(orderItemRepository.create).not.toHaveBeenCalled()
@@ -107,6 +129,16 @@ describe('CreateOrderItemUseCase', () => {
   })
 
   it('deve lançar erro quando estoque é insuficiente', async () => {
+    const mockOrder = {
+      id: 'order-id',
+      clientId: 'client-id',
+      status: 'received' as const,
+      orderDate: new Date(),
+      total: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
     const mockProduct = {
       id: 'product-id',
       name: 'Produto Teste',
@@ -117,6 +149,7 @@ describe('CreateOrderItemUseCase', () => {
       updatedAt: new Date(),
     }
 
+    vi.mocked(orderRepository.findById).mockResolvedValue(mockOrder)
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
 
     await expect(
@@ -124,7 +157,7 @@ describe('CreateOrderItemUseCase', () => {
         orderId: 'order-id',
         productId: 'product-id',
         quantity: 5,
-      }),
+      }, 'client-id'),
     ).rejects.toThrow('Estoque insuficiente')
 
     expect(orderItemRepository.create).not.toHaveBeenCalled()
@@ -133,6 +166,16 @@ describe('CreateOrderItemUseCase', () => {
   })
 
   it('deve reduzir o estoque corretamente', async () => {
+    const mockOrder = {
+      id: 'order-id',
+      clientId: 'client-id',
+      status: 'received' as const,
+      orderDate: new Date(),
+      total: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
     const mockProduct = {
       id: 'product-id',
       name: 'Produto Teste',
@@ -154,6 +197,7 @@ describe('CreateOrderItemUseCase', () => {
       updatedAt: new Date(),
     }
 
+    vi.mocked(orderRepository.findById).mockResolvedValue(mockOrder)
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
     vi.mocked(orderItemRepository.create).mockResolvedValue(mockOrderItem)
 
@@ -161,7 +205,7 @@ describe('CreateOrderItemUseCase', () => {
       orderId: 'order-id',
       productId: 'product-id',
       quantity: 3,
-    })
+    }, 'client-id')
 
     expect(productRepository.updateStock).toHaveBeenCalledWith('product-id', 17)
   })

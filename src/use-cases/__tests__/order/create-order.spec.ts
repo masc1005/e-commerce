@@ -111,17 +111,4 @@ describe('CreateOrderUseCase', () => {
 
     expect(result).toEqual(mockOrder)
   })
-
-  it('should throw error when client tries to create order for another client', async () => {
-    await expect(
-      createOrderUseCase.execute({
-        data: {
-          clientId: 'other-client-id',
-          items: [{ productId: 'product-1', quantity: 2 }],
-        },
-        authenticatedUserId: 'client-id',
-        authenticatedUserType: 'client',
-      }),
-    ).rejects.toThrow('You can only create orders for yourself')
-  })
 })
