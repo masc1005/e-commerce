@@ -9,6 +9,7 @@ import {
 } from '@/middlewares/auth.middleware'
 import { createUserSchema, loginSchema, updateUserSchema } from '@/validators'
 import { uuidParamSchema } from '@/validators/common.validator'
+import { authRateLimiter } from '@/config/rate-limit'
 
 const router = Router()
 const userRepository = new UserRepository()
@@ -22,7 +23,7 @@ router.post(
   (req, res) => userController.create(req, res),
 )
 
-router.post('/login', validate(loginSchema), (req, res) =>
+router.post('/login', authRateLimiter, validate(loginSchema), (req, res) =>
   userController.login(req, res),
 )
 

@@ -101,6 +101,7 @@ const options: swaggerJsdoc.Options = {
       },
     },
     tags: [
+      { name: 'Health', description: 'Verificação de saúde da aplicação' },
       {
         name: 'Users',
         description: 'Gerenciamento de usuários e autenticação',

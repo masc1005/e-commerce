@@ -1,0 +1,29 @@
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Verificar status da aplicação
+      description: Retorna o status de saúde da aplicação, útil para monitoramento e health checks
+      responses:
+        200:
+          description: Aplicação está funcionando corretamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'ok'
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: '2025-01-25T03:55:44.123Z'
+                  uptime:
+                    type: number
+                    description: Tempo em segundos desde que o servidor iniciou
+                    example: 3600.5
+                  environment:
+                    type: string
+                    example: 'development'
