@@ -1,4 +1,4 @@
-import { eq, and, count } from 'drizzle-orm'
+import { eq, and, count, gte, lte } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { ordersTable, orderItemsTable, productsTable } from '@/config/database/schemas'
 import { PaginationParams, PaginatedResponse } from '@/types/common'
@@ -9,6 +9,12 @@ import type {
   OrderItemResponseDTO,
   UpdateOrderStatusDTO,
 } from '@/types/order/dto'
+
+export interface OrderFilters {
+  clientId?: string
+  startDate?: Date
+  endDate?: Date
+}
 
 export class OrderRepository {
   async create(data: CreateOrderDTO): Promise<OrderResponseDTO> {
@@ -161,14 +167,34 @@ export class OrderRepository {
     }
   }
 
-  async list(params?: PaginationParams): Promise<PaginatedResponse<OrderResponseDTO>> {
+  async list(params?: PaginationParams, filters?: OrderFilters): Promise<PaginatedResponse<OrderResponseDTO>> {
     const page = params?.page || 1
     const limit = params?.limit || 10
     const offset = (page - 1) * limit
 
+    const conditions = []
+
+    if (filters?.clientId) {
+      conditions.push(eq(ordersTable.clientId, filters.clientId))
+    }
+
+    if (filters?.startDate) {
+      conditions.push(gte(ordersTable.orderDate, filters.startDate))
+    }
+
+    if (filters?.endDate) {
+      conditions.push(lte(ordersTable.orderDate, filters.endDate))
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined
+
     const [orders, totalResult] = await Promise.all([
-      db.select().from(ordersTable).limit(limit).offset(offset),
-      db.select({ count: count() }).from(ordersTable),
+      whereClause
+        ? db.select().from(ordersTable).where(whereClause).limit(limit).offset(offset)
+        : db.select().from(ordersTable).limit(limit).offset(offset),
+      whereClause
+        ? db.select({ count: count() }).from(ordersTable).where(whereClause)
+        : db.select({ count: count() }).from(ordersTable),
     ])
 
     const total = totalResult[0].count

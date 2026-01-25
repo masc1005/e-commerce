@@ -1,4 +1,4 @@
-import { eq, count } from 'drizzle-orm'
+import { eq, count, and, gte, lte, like, gt } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { productsTable } from '@/config/database/schemas'
 import { PaginationParams, PaginatedResponse } from '@/types/common'
@@ -7,6 +7,13 @@ import type {
   UpdateProductDTO,
   ProductResponseDTO,
 } from '@/types/product/dto'
+
+export interface ProductFilters {
+  name?: string
+  minPrice?: number
+  maxPrice?: number
+  inStock?: boolean
+}
 
 export class ProductRepository {
   async create(data: CreateProductDTO): Promise<ProductResponseDTO> {
@@ -40,14 +47,42 @@ export class ProductRepository {
     }
   }
 
-  async list(params?: PaginationParams): Promise<PaginatedResponse<ProductResponseDTO>> {
+  async list(params?: PaginationParams, filters?: ProductFilters): Promise<PaginatedResponse<ProductResponseDTO>> {
     const page = params?.page || 1
     const limit = params?.limit || 10
     const offset = (page - 1) * limit
 
+    const conditions = []
+
+    if (filters?.name) {
+      conditions.push(like(productsTable.name, `%${filters.name}%`))
+    }
+
+    if (filters?.minPrice !== undefined) {
+      conditions.push(gte(productsTable.price, filters.minPrice.toString()))
+    }
+
+    if (filters?.maxPrice !== undefined) {
+      conditions.push(lte(productsTable.price, filters.maxPrice.toString()))
+    }
+
+    if (filters?.inStock !== undefined) {
+      if (filters.inStock) {
+        conditions.push(gt(productsTable.stock, 0))
+      } else {
+        conditions.push(eq(productsTable.stock, 0))
+      }
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined
+
     const [products, totalResult] = await Promise.all([
-      db.select().from(productsTable).limit(limit).offset(offset),
-      db.select({ count: count() }).from(productsTable),
+      whereClause
+        ? db.select().from(productsTable).where(whereClause).limit(limit).offset(offset)
+        : db.select().from(productsTable).limit(limit).offset(offset),
+      whereClause
+        ? db.select({ count: count() }).from(productsTable).where(whereClause)
+        : db.select({ count: count() }).from(productsTable),
     ])
 
     const total = totalResult[0].count

@@ -24,6 +24,10 @@ router.post('/', authMiddleware, validate(createOrderSchema), (req, res) =>
 
 router.get('/', authMiddleware, (req, res) => orderController.list(req, res))
 
+router.get('/report/csv', authMiddleware, (req, res) =>
+  orderController.generateReport(req, res),
+)
+
 router.get(
   '/:id',
   authMiddleware,

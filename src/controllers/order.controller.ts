@@ -6,6 +6,7 @@ import { ListOrdersUseCase } from '@/use-cases/order/list-orders'
 import { GetOrderByIdUseCase } from '@/use-cases/order/get-order-by-id'
 import { UpdateOrderStatusUseCase } from '@/use-cases/order/update-order-status'
 import { DeleteOrderUseCase } from '@/use-cases/order/delete-order'
+import { GenerateOrderReportUseCase } from '@/use-cases/order/generate-report'
 
 export class OrderController {
   private createOrderUseCase: CreateOrderUseCase
@@ -13,6 +14,7 @@ export class OrderController {
   private getOrderByIdUseCase: GetOrderByIdUseCase
   private updateOrderStatusUseCase: UpdateOrderStatusUseCase
   private deleteOrderUseCase: DeleteOrderUseCase
+  private generateOrderReportUseCase: GenerateOrderReportUseCase
 
   constructor(
     private orderRepository: OrderRepository,
@@ -28,6 +30,7 @@ export class OrderController {
       orderRepository,
     )
     this.deleteOrderUseCase = new DeleteOrderUseCase(orderRepository)
+    this.generateOrderReportUseCase = new GenerateOrderReportUseCase(orderRepository)
   }
 
   async create(req: Request, res: Response) {
@@ -75,10 +78,25 @@ export class OrderController {
       const page = req.query.page ? parseInt(req.query.page as string) : undefined
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
 
+      const filters: any = {}
+      
+      if (req.query.clientId) {
+        filters.clientId = req.query.clientId as string
+      }
+      
+      if (req.query.startDate) {
+        filters.startDate = new Date(req.query.startDate as string)
+      }
+      
+      if (req.query.endDate) {
+        filters.endDate = new Date(req.query.endDate as string)
+      }
+
       const result = await this.listOrdersUseCase.execute({
         authenticatedUserId: userId,
         authenticatedUserType: userType,
         pagination: { page, limit },
+        filters,
       })
 
       return res.json(result)
@@ -165,6 +183,42 @@ export class OrderController {
           return res.status(403).json({ error: error.message })
         }
         return res.status(404).json({ error: error.message })
+      }
+      return res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+
+  async generateReport(req: Request, res: Response) {
+    try {
+      const userType = req.user?.type
+
+      if (!userType) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined
+      const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined
+
+      const csv = await this.generateOrderReportUseCase.execute({
+        startDate,
+        endDate,
+        authenticatedUserType: userType,
+      })
+
+      const filename = `orders-report-${new Date().toISOString().split('T')[0]}.csv`
+      
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
+      res.setHeader('Cache-Control', 'no-cache')
+      res.setHeader('Pragma', 'no-cache')
+      
+      return res.status(200).send(csv)
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'Only admins can generate reports') {
+          return res.status(403).json({ error: error.message })
+        }
+        return res.status(400).json({ error: error.message })
       }
       return res.status(500).json({ error: 'Internal server error' })
     }

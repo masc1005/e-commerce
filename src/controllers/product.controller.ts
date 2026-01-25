@@ -56,7 +56,25 @@ export class ProductController {
       const page = req.query.page ? parseInt(req.query.page as string) : undefined
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
 
-      const result = await this.listProductsUseCase.execute({ page, limit })
+      const filters: any = {}
+      
+      if (req.query.name) {
+        filters.name = req.query.name as string
+      }
+      
+      if (req.query.minPrice) {
+        filters.minPrice = parseFloat(req.query.minPrice as string)
+      }
+      
+      if (req.query.maxPrice) {
+        filters.maxPrice = parseFloat(req.query.maxPrice as string)
+      }
+      
+      if (req.query.inStock !== undefined) {
+        filters.inStock = req.query.inStock === 'true'
+      }
+
+      const result = await this.listProductsUseCase.execute({ page, limit }, filters)
 
       return res.json(result)
     } catch (error) {
