@@ -34,6 +34,24 @@ export class ClientRepository {
     return client || null
   }
 
+  async findByIdWithAnyStatus(id: string): Promise<ClientResponseDTO | null> {
+    const [client] = await db
+      .select()
+      .from(clientsTable)
+      .where(eq(clientsTable.id, id))
+
+    return client || null
+  }
+
+  async findActive(id: string): Promise<ClientResponseDTO | null> {
+    const [client] = await db
+      .select()
+      .from(clientsTable)
+      .where(and(eq(clientsTable.id, id), eq(clientsTable.status, 'active')))
+
+    return client || null
+  }
+
   async findByUserId(userId: string): Promise<ClientResponseDTO | null> {
     const [client] = await db
       .select()
@@ -41,6 +59,17 @@ export class ClientRepository {
       .where(
         and(eq(clientsTable.userId, userId), eq(clientsTable.status, 'active')),
       )
+
+    return client || null
+  }
+
+  async findByUserIdWithAnyStatus(
+    userId: string,
+  ): Promise<ClientResponseDTO | null> {
+    const [client] = await db
+      .select()
+      .from(clientsTable)
+      .where(eq(clientsTable.id, userId))
 
     return client || null
   }

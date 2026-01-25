@@ -9,10 +9,10 @@ export class DeleteOrderItemUseCase {
     private orderRepository: OrderRepository,
   ) {}
 
-  async execute(id: string): Promise<boolean> {
+  async execute(id: string): Promise<{ deleted: boolean; orderId: string | null }> {
     const orderItem = await this.orderItemRepository.findById(id)
     if (!orderItem) {
-      return false
+      return { deleted: false, orderId: null }
     }
 
     const product = await this.productRepository.findById(orderItem.productId)
@@ -29,6 +29,6 @@ export class DeleteOrderItemUseCase {
       await this.orderRepository.updateTotal(orderItem.orderId)
     }
 
-    return deleted
+    return { deleted, orderId: orderItem.orderId }
   }
 }

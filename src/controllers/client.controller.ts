@@ -71,7 +71,32 @@ export class ClientController {
       })
     } catch (error) {
       if (error instanceof Error) {
-        return res.status(400).json({ error: error.message })
+        const errorMessage = error.message
+        if (
+          errorMessage.includes('duplicate key') ||
+          errorMessage.includes('unique constraint')
+        ) {
+          return res.status(409).json({
+            error: 'Email already registered',
+            details: 'A user with this email already exists in the system',
+          })
+        }
+
+        if (errorMessage.includes('foreign key constraint')) {
+          return res.status(400).json({
+            error: 'Invalid reference',
+            details: 'The referenced user does not exist',
+          })
+        }
+
+        if (errorMessage.includes('Failed query')) {
+          return res.status(500).json({
+            error: 'Database error',
+            details: 'Failed to create client. Please try again later.',
+          })
+        }
+
+        return res.status(400).json({ error: errorMessage })
       }
       return res.status(500).json({ error: 'Internal server error' })
     }
@@ -79,7 +104,7 @@ export class ClientController {
 
   async list(req: Request, res: Response) {
     try {
-      if (req.user?.type !== 'admin') throw new Error('Unathorized')
+      if (req.user?.type !== 'admin') throw new Error('Unauthorized')
 
       const page = req.query.page
         ? parseInt(req.query.page as string)

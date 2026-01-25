@@ -1,4 +1,4 @@
-import { eq, count, and, gte, lte, like, gt } from 'drizzle-orm'
+import { eq, count, and, gte, lte, ilike } from 'drizzle-orm'
 import { db } from '@/config/database/connection'
 import { productsTable } from '@/config/database/schemas'
 import { PaginationParams, PaginatedResponse } from '@/types/common'
@@ -12,7 +12,6 @@ export interface ProductFilters {
   name?: string
   minPrice?: number
   maxPrice?: number
-  inStock?: boolean
 }
 
 export class ProductRepository {
@@ -58,7 +57,7 @@ export class ProductRepository {
     const conditions = []
 
     if (filters?.name) {
-      conditions.push(like(productsTable.name, `%${filters.name}%`))
+      conditions.push(ilike(productsTable.name, `%${filters.name}%`))
     }
 
     if (filters?.minPrice !== undefined) {
@@ -67,14 +66,6 @@ export class ProductRepository {
 
     if (filters?.maxPrice !== undefined) {
       conditions.push(lte(productsTable.price, filters.maxPrice.toString()))
-    }
-
-    if (filters?.inStock !== undefined) {
-      if (filters.inStock) {
-        conditions.push(gt(productsTable.stock, 0))
-      } else {
-        conditions.push(eq(productsTable.stock, 0))
-      }
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined

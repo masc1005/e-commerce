@@ -74,10 +74,6 @@ export class ProductController {
         filters.maxPrice = parseFloat(req.query.maxPrice as string)
       }
 
-      if (req.query.inStock !== undefined) {
-        filters.inStock = req.query.inStock === 'true'
-      }
-
       const result = await this.listProductsUseCase.execute(
         { page, limit },
         filters,

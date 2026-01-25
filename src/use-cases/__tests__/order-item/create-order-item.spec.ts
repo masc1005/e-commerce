@@ -127,7 +127,7 @@ describe('CreateOrderItemUseCase', () => {
         },
         'client-id',
       ),
-    ).rejects.toThrow('Produto não encontrado')
+    ).rejects.toThrow('Product not found')
 
     expect(orderItemRepository.create).not.toHaveBeenCalled()
     expect(productRepository.updateStock).not.toHaveBeenCalled()
@@ -167,7 +167,7 @@ describe('CreateOrderItemUseCase', () => {
         },
         'client-id',
       ),
-    ).rejects.toThrow('Estoque insuficiente')
+    ).rejects.toThrow('Insufficient stock')
 
     expect(orderItemRepository.create).not.toHaveBeenCalled()
     expect(productRepository.updateStock).not.toHaveBeenCalled()

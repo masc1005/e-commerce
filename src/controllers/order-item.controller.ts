@@ -110,14 +110,16 @@ export class OrderItemController {
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id as string
-      const deleted = await this.deleteOrderItemUseCase.execute(id)
+      const result = await this.deleteOrderItemUseCase.execute(id)
 
-      if (!deleted) {
+      if (!result.deleted) {
         res.status(404).json({ error: 'Item do pedido não encontrado' })
         return
       }
 
-      res.status(204).send()
+      res.status(200).json({
+        message: `Item removed from your order: ${result.orderId}`,
+      })
     } catch (error) {
       res.status(500).json({ error: 'Erro ao deletar item do pedido' })
     }

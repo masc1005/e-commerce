@@ -1,8 +1,8 @@
 import { db } from '@/config/database/connection'
 import { usersTable } from '@/config/database/schemas'
 import { CreateUserDTO, UpdateUserDTO } from '@/types/user/dto'
-import { PaginationParams, PaginatedResponse } from '@/types/common'
 import { eq, count } from 'drizzle-orm'
+import { PaginationParams, PaginatedResponse } from '@/types/common'
 
 export class UserRepository {
   async create(data: CreateUserDTO & { password: string }) {

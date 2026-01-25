@@ -31,11 +31,11 @@ export class OrderRepository {
       })
 
       if (!product) {
-        throw new Error(`Produto ${item.productId} não encontrado`)
+        throw new Error(`Product ${item.productId} not found`)
       }
 
       if (product.stock < item.quantity) {
-        throw new Error(`Estoque insuficiente para o produto ${product.name}`)
+        throw new Error(`Insufficient stock for product ${product.name}`)
       }
 
       const unitPrice = parseFloat(product.price)

@@ -19,17 +19,13 @@ export class CreateUserUseCase {
 
     if (input.type === 'admin') {
       if (!requestingUserId) {
-        throw new Error(
-          'Apenas administradores podem criar novos administradores',
-        )
+        throw new Error('Only administrators can create new administrators')
       }
 
       const requestingUser =
         await this.userRepository.findById(requestingUserId)
       if (!requestingUser || requestingUser.type !== 'admin') {
-        throw new Error(
-          'Apenas administradores podem criar novos administradores',
-        )
+        throw new Error('Only administrators can create new administrators')
       }
 
       userType = 'admin'

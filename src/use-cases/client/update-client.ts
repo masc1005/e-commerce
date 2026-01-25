@@ -25,6 +25,9 @@ export class UpdateClientUseCase {
       throw new Error('You do not have permission to update this client')
     }
 
+    if (params.data.status === 'inactive')
+      throw new Error('You cannot deactivate a client in this service')
+
     const updatedClient = await this.clientRepository.update(clientId, data)
 
     if (!updatedClient) {

@@ -17,23 +17,21 @@ export class CreateOrderItemUseCase {
     const order = await this.orderRepository.findById(data.orderId)
 
     if (!order) {
-      throw new Error('Pedido não encontrado')
+      throw new Error('Order not found')
     }
 
     if (order.clientId !== userId) {
-      throw new Error(
-        'Você não tem permissão para adicionar itens a este pedido',
-      )
+      throw new Error('You do not have permission to add items to this order')
     }
 
     const product = await this.productRepository.findById(data.productId)
 
     if (!product) {
-      throw new Error('Produto não encontrado')
+      throw new Error('Product not found')
     }
 
     if (product.stock < data.quantity) {
-      throw new Error('Estoque insuficiente')
+      throw new Error('Insufficient stock')
     }
 
     const orderItem = await this.orderItemRepository.create({

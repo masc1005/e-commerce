@@ -21,14 +21,14 @@ export class UpdateOrderItemUseCase {
 
     const product = await this.productRepository.findById(orderItem.productId)
     if (!product) {
-      throw new Error('Produto não encontrado')
+      throw new Error('Product not found')
     }
 
     const quantityDifference = quantity - orderItem.quantity
 
     if (quantityDifference > 0) {
       if (product.stock < quantityDifference) {
-        throw new Error('Estoque insuficiente')
+        throw new Error('Insufficient stock')
       }
       await this.productRepository.updateStock(
         orderItem.productId,

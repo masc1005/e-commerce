@@ -151,7 +151,7 @@ describe('UpdateOrderItemUseCase', () => {
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
 
     await expect(updateOrderItemUseCase.execute('item-id', 10)).rejects.toThrow(
-      'Estoque insuficiente',
+      'Insufficient stock',
     )
   })
 })
