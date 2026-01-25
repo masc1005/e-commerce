@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ecommerce
+      POSTGRES_DB: loomi
     ports:
       - "5432:5432"
     volumes:
@@ -30,12 +30,11 @@ services:
     environment:
       NODE_ENV: production
       SERVER_PORT: 3000
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ecommerce
-      JWT_SECRET: your-secret-key-change-in-production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/loomi
+      JWT_SECRET: "default-secret-change-in-production"
     depends_on:
       postgres:
         condition: service_healthy
-    command: sh -c "npm run db:push && node dist/index.js"
 
 volumes:
   postgres_data:

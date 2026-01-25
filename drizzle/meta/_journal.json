@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1769123612928,
-      "tag": "0000_freezing_phil_sheldon",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1769124420000,
-      "tag": "0004_talented_shinobi_shaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1769124598509,
-      "tag": "0005_wise_silhouette",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1769124655596,
-      "tag": "0006_puzzling_bromley",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1769124739107,
-      "tag": "0007_lying_tony_stark",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1769202631483,
-      "tag": "0008_demonic_lenny_balinger",
+      "when": 1769303014440,
+      "tag": "0000_brief_swordsman",
       "breakpoints": true
     }
   ]
