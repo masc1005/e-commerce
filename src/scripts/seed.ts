@@ -110,7 +110,9 @@ async function seedProducts() {
   const [productCount] = await db.select({ count: count() }).from(productsTable)
 
   if (productCount.count > 0) {
-    console.log(`✅ Já existem ${productCount.count} produtos no banco de dados`)
+    console.log(
+      `✅ Já existem ${productCount.count} produtos no banco de dados`,
+    )
     return
   }
 

@@ -9,7 +9,9 @@ export class DeleteOrderItemUseCase {
     private orderRepository: OrderRepository,
   ) {}
 
-  async execute(id: string): Promise<{ deleted: boolean; orderId: string | null }> {
+  async execute(
+    id: string,
+  ): Promise<{ deleted: boolean; orderId: string | null }> {
     const orderItem = await this.orderItemRepository.findById(id)
     if (!orderItem) {
       return { deleted: false, orderId: null }

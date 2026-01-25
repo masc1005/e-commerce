@@ -19,8 +19,11 @@ router.post('/', authMiddleware, validate(createProductSchema), (req, res) =>
 
 router.get('/', authMiddleware, (req, res) => productController.list(req, res))
 
-router.get('/:id', authMiddleware, validateParams(uuidParamSchema), (req, res) =>
-  productController.getById(req, res),
+router.get(
+  '/:id',
+  authMiddleware,
+  validateParams(uuidParamSchema),
+  (req, res) => productController.getById(req, res),
 )
 
 router.put(
