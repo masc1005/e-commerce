@@ -83,11 +83,14 @@ describe('CreateOrderItemUseCase', () => {
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
     vi.mocked(orderItemRepository.create).mockResolvedValue(mockOrderItem)
 
-    const result = await createOrderItemUseCase.execute({
-      orderId: 'order-id',
-      productId: 'product-id',
-      quantity: 2,
-    }, 'client-id')
+    const result = await createOrderItemUseCase.execute(
+      {
+        orderId: 'order-id',
+        productId: 'product-id',
+        quantity: 2,
+      },
+      'client-id',
+    )
 
     expect(productRepository.findById).toHaveBeenCalledWith('product-id')
     expect(orderItemRepository.create).toHaveBeenCalledWith({
@@ -116,11 +119,14 @@ describe('CreateOrderItemUseCase', () => {
     vi.mocked(productRepository.findById).mockResolvedValue(null)
 
     await expect(
-      createOrderItemUseCase.execute({
-        orderId: 'order-id',
-        productId: 'product-id',
-        quantity: 2,
-      }, 'client-id'),
+      createOrderItemUseCase.execute(
+        {
+          orderId: 'order-id',
+          productId: 'product-id',
+          quantity: 2,
+        },
+        'client-id',
+      ),
     ).rejects.toThrow('Produto não encontrado')
 
     expect(orderItemRepository.create).not.toHaveBeenCalled()
@@ -153,11 +159,14 @@ describe('CreateOrderItemUseCase', () => {
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
 
     await expect(
-      createOrderItemUseCase.execute({
-        orderId: 'order-id',
-        productId: 'product-id',
-        quantity: 5,
-      }, 'client-id'),
+      createOrderItemUseCase.execute(
+        {
+          orderId: 'order-id',
+          productId: 'product-id',
+          quantity: 5,
+        },
+        'client-id',
+      ),
     ).rejects.toThrow('Estoque insuficiente')
 
     expect(orderItemRepository.create).not.toHaveBeenCalled()
@@ -201,11 +210,14 @@ describe('CreateOrderItemUseCase', () => {
     vi.mocked(productRepository.findById).mockResolvedValue(mockProduct)
     vi.mocked(orderItemRepository.create).mockResolvedValue(mockOrderItem)
 
-    await createOrderItemUseCase.execute({
-      orderId: 'order-id',
-      productId: 'product-id',
-      quantity: 3,
-    }, 'client-id')
+    await createOrderItemUseCase.execute(
+      {
+        orderId: 'order-id',
+        productId: 'product-id',
+        quantity: 3,
+      },
+      'client-id',
+    )
 
     expect(productRepository.updateStock).toHaveBeenCalledWith('product-id', 17)
   })

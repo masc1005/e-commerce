@@ -85,7 +85,9 @@ describe('CreateUserUseCase', () => {
         },
         'client-id',
       ),
-    ).rejects.toThrow('Apenas administradores podem criar novos administradores')
+    ).rejects.toThrow(
+      'Apenas administradores podem criar novos administradores',
+    )
   })
 
   it('should throw error when unauthenticated user tries to create admin', async () => {
@@ -98,7 +100,9 @@ describe('CreateUserUseCase', () => {
         password: 'password123',
         type: 'admin',
       }),
-    ).rejects.toThrow('Apenas administradores podem criar novos administradores')
+    ).rejects.toThrow(
+      'Apenas administradores podem criar novos administradores',
+    )
   })
 
   it('should create client user when not authenticated (public signup)', async () => {

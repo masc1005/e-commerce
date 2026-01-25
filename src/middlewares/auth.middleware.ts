@@ -49,9 +49,6 @@ export const authMiddleware = (
     return res.status(401).json({ error: 'Invalid token' })
   }
 }
-
-// Optional auth middleware - doesn't fail if no token is provided
-// Used for routes that can be accessed both authenticated and unauthenticated
 export const optionalAuthMiddleware = (
   req: Request,
   res: Response,
@@ -61,19 +58,19 @@ export const optionalAuthMiddleware = (
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
-      return next() // Continue without authentication
+      return next()
     }
 
     const [, token] = authHeader.split(' ')
 
     if (!token) {
-      return next() // Continue without authentication
+      return next()
     }
 
     const secret = process.env.JWT_SECRET
 
     if (!secret) {
-      return next() // Continue without authentication
+      return next()
     }
 
     const decoded = jwt.verify(token, secret) as JwtPayload
@@ -81,7 +78,6 @@ export const optionalAuthMiddleware = (
 
     return next()
   } catch (error) {
-    // Invalid token, but continue anyway (will be handled by use case)
     return next()
   }
 }

@@ -14,7 +14,6 @@ async function seedAdmin() {
   try {
     console.log('🌱 Verificando se admin padrão existe...')
 
-    // Verifica se já existe um admin com esse email
     const existingAdmin = await db
       .select()
       .from(usersTable)
@@ -26,10 +25,8 @@ async function seedAdmin() {
       process.exit(0)
     }
 
-    // Cria o hash da senha
     const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10)
 
-    // Insere o admin no banco
     await db.insert(usersTable).values({
       name: ADMIN_NAME,
       email: ADMIN_EMAIL,
@@ -41,7 +38,9 @@ async function seedAdmin() {
     console.log(`📧 Email: ${ADMIN_EMAIL}`)
     console.log(`🔑 Senha: ${ADMIN_PASSWORD}`)
     console.log('')
-    console.log('⚠️  IMPORTANTE: Altere a senha do admin após o primeiro login!')
+    console.log(
+      '⚠️  IMPORTANTE: Altere a senha do admin após o primeiro login!',
+    )
 
     process.exit(0)
   } catch (error) {

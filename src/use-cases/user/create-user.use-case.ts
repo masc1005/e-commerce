@@ -15,10 +15,8 @@ export class CreateUserUseCase {
       throw new Error('Email already exists')
     }
 
-    // Sanitize user type - prevent admin injection
     let userType: 'admin' | 'client' = 'client'
 
-    // Only allow admin creation if requested by an existing admin
     if (input.type === 'admin') {
       if (!requestingUserId) {
         throw new Error(
@@ -26,7 +24,8 @@ export class CreateUserUseCase {
         )
       }
 
-      const requestingUser = await this.userRepository.findById(requestingUserId)
+      const requestingUser =
+        await this.userRepository.findById(requestingUserId)
       if (!requestingUser || requestingUser.type !== 'admin') {
         throw new Error(
           'Apenas administradores podem criar novos administradores',
