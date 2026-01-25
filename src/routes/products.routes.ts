@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { ProductController } from '@/controllers/product.controller'
-import { ProductRepository } from '@/repositories/product.repository'
+import { ProductController } from '@/controllers'
+import { ProductRepository } from '@/repositories'
 import { validate, validateParams } from '@/middlewares/validate.middleware'
 import { authMiddleware } from '@/middlewares/auth.middleware'
 import {

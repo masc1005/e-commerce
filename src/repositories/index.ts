@@ -1,4 +1,5 @@
 export * from './user.repository'
+export * from './client.repository'
 export * from './product.repository'
 export * from './order.repository'
 export * from './order-item.repository'

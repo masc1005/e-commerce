@@ -75,7 +75,7 @@ describe('DeleteOrderItemUseCase', () => {
 
     const result = await deleteOrderItemUseCase.execute('item-id')
 
-    expect(result).toBe(true)
+    expect(result).toEqual({ deleted: true, orderId: 'order-id' })
     expect(productRepository.updateStock).toHaveBeenCalledWith('product-id', 13)
     expect(orderItemRepository.delete).toHaveBeenCalledWith('item-id')
     expect(orderRepository.updateTotal).toHaveBeenCalledWith('order-id')
@@ -86,7 +86,7 @@ describe('DeleteOrderItemUseCase', () => {
 
     const result = await deleteOrderItemUseCase.execute('item-id')
 
-    expect(result).toBe(false)
+    expect(result).toEqual({ deleted: false, orderId: null })
     expect(productRepository.findById).not.toHaveBeenCalled()
     expect(orderItemRepository.delete).not.toHaveBeenCalled()
     expect(orderRepository.updateTotal).not.toHaveBeenCalled()
@@ -110,7 +110,7 @@ describe('DeleteOrderItemUseCase', () => {
 
     const result = await deleteOrderItemUseCase.execute('item-id')
 
-    expect(result).toBe(true)
+    expect(result).toEqual({ deleted: true, orderId: 'order-id' })
     expect(productRepository.updateStock).not.toHaveBeenCalled()
     expect(orderRepository.updateTotal).toHaveBeenCalledWith('order-id')
   })

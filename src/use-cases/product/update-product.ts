@@ -1,5 +1,6 @@
 import { ProductRepository } from '@/repositories/product.repository'
 import type { UpdateProductDTO, ProductResponseDTO } from '@/types/product/dto'
+import { cache } from '@/config/cache'
 
 interface ExecuteParams {
   id: string
@@ -29,6 +30,8 @@ export class UpdateProductUseCase {
     if (!updatedProduct) {
       throw new Error('Failed to update product')
     }
+
+    await cache.delPattern('products:*')
 
     return updatedProduct
   }

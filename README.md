@@ -3,6 +3,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-4169E1?logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7+-DC382D?logo=redis&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4+-000000?logo=express&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 
@@ -14,6 +15,7 @@ API REST para sistema de e-commerce desenvolvida com Node.js, TypeScript, Expres
 - **Linguagem**: TypeScript 5+
 - **Framework**: Express.js
 - **Banco de Dados**: PostgreSQL 16+ com Drizzle ORM
+- **Cache**: Redis 7+
 - **Autenticação**: JWT (JSON Web Tokens)
 - **Validação**: Zod
 - **Documentação**: Swagger/OpenAPI
@@ -319,6 +321,32 @@ src/
 
 ---
 
+## Cache com Redis
+
+A API utiliza Redis para cache de dados, melhorando a performance das consultas.
+
+### O que é cacheado
+
+| Endpoint            | TTL   | Invalidação                            |
+| ------------------- | ----- | -------------------------------------- |
+| `GET /api/products` | 5 min | Ao criar, atualizar ou deletar produto |
+
+### Configuração
+
+**Variável de ambiente:**
+
+```env
+REDIS_URL=redis://localhost:6379
+```
+
+### Comportamento
+
+- O cache é **opcional** - a aplicação funciona normalmente sem Redis
+- Falhas de conexão são tratadas silenciosamente
+- Ao modificar produtos, o cache é automaticamente invalidado
+
+---
+
 ## 🐳 Docker
 
 ### Comandos Úteis
@@ -357,10 +385,10 @@ Este projeto foi desenvolvido com auxílio de ferramentas de Inteligência Artif
 
 ### Ferramentas Utilizadas
 
-| Ferramenta             | Uso                                            |
-| ---------------------- | ---------------------------------------------- |
-| **Claude Opus - Antigravity** | Pair programming, refatoração e debugging      |
-| **Google Gemini** | Analise de projeto e plano de desenvolvimento      |
+| Ferramenta                    | Uso                                           |
+| ----------------------------- | --------------------------------------------- |
+| **Claude Opus - Antigravity** | Pair programming, refatoração e debugging     |
+| **Google Gemini**             | Analise de projeto e plano de desenvolvimento |
 
 ### Práticas Adotadas
 
@@ -375,7 +403,6 @@ Este projeto foi desenvolvido com auxílio de ferramentas de Inteligência Artif
 - 🔍 **Qualidade**: Identificação precoce de bugs e code smells
 - 📚 **Aprendizado**: Exposição a diferentes padrões e abordagens
 - 📝 **Documentação**: README e Swagger mais completos e padronizados
-
 
 ### Sobre o uso
 

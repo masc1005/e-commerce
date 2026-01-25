@@ -1,5 +1,6 @@
 import { ProductRepository } from '@/repositories/product.repository'
 import type { CreateProductDTO, ProductResponseDTO } from '@/types/product/dto'
+import { cache } from '@/config/cache'
 
 interface ExecuteParams {
   data: CreateProductDTO
@@ -18,6 +19,8 @@ export class CreateProductUseCase {
     }
 
     const product = await this.productRepository.create(data)
+
+    await cache.delPattern('products:*')
 
     return product
   }

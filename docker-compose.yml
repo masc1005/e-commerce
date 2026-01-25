@@ -19,6 +19,20 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build:
       context: .
@@ -31,6 +45,7 @@ services:
       NODE_ENV: production
       SERVER_PORT: 3000
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/loomi
+      REDIS_URL: redis://redis:6379
       JWT_SECRET: "default-secret-change-in-production"
       ADMIN_EMAIL: "admin@loomi.com"
       ADMIN_PASSWORD: "admin123"
@@ -38,7 +53,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local

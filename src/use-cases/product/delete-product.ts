@@ -1,4 +1,5 @@
 import { ProductRepository } from '@/repositories/product.repository'
+import { cache } from '@/config/cache'
 
 interface ExecuteParams {
   id: string
@@ -23,6 +24,8 @@ export class DeleteProductUseCase {
     }
 
     await this.productRepository.delete(id)
+
+    await cache.delPattern('products:*')
 
     return { message: 'Product deleted successfully' }
   }

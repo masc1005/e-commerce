@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { UserController } from '@/controllers'
 import { UserRepository } from '@/repositories'
-import { ClientRepository } from '@/repositories/client.repository'
+import { ClientRepository } from '@/repositories'
 import { validate, validateParams } from '@/middlewares/validate.middleware'
 import {
   authMiddleware,
