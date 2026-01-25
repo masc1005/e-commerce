@@ -26,11 +26,9 @@ export class GenerateOrderReportUseCase {
     )
     const orders = result.data
 
-    // CSV Header
     let csv =
       'ID,Cliente ID,Status,Data do Pedido,Total,Criado em,Atualizado em\n'
 
-    // CSV Rows
     for (const order of orders) {
       csv += `${order.id},${order.clientId},${order.status},${order.orderDate.toISOString()},${order.total},${order.createdAt.toISOString()},${order.updatedAt.toISOString()}\n`
     }
