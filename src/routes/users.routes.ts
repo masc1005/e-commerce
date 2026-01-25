@@ -3,7 +3,10 @@ import { UserController } from '@/controllers'
 import { UserRepository } from '@/repositories'
 import { ClientRepository } from '@/repositories/client.repository'
 import { validate, validateParams } from '@/middlewares/validate.middleware'
-import { authMiddleware } from '@/middlewares/auth.middleware'
+import {
+  authMiddleware,
+  optionalAuthMiddleware,
+} from '@/middlewares/auth.middleware'
 import { createUserSchema, loginSchema, updateUserSchema } from '@/validators'
 import { uuidParamSchema } from '@/validators/common.validator'
 
@@ -12,8 +15,11 @@ const userRepository = new UserRepository()
 const clientRepository = new ClientRepository()
 const userController = new UserController(userRepository, clientRepository)
 
-router.post('/', validate(createUserSchema), (req, res) =>
-  userController.create(req, res),
+router.post(
+  '/',
+  optionalAuthMiddleware,
+  validate(createUserSchema),
+  (req, res) => userController.create(req, res),
 )
 
 router.post('/login', validate(loginSchema), (req, res) =>

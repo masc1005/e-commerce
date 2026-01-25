@@ -32,6 +32,9 @@ services:
       SERVER_PORT: 3000
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/loomi
       JWT_SECRET: "default-secret-change-in-production"
+      ADMIN_EMAIL: "admin@loomi.com"
+      ADMIN_PASSWORD: "admin123"
+      ADMIN_NAME: "Administrador"
     depends_on:
       postgres:
         condition: service_healthy

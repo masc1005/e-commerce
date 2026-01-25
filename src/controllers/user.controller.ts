@@ -35,7 +35,13 @@ export class UserController {
 
   async create(req: Request, res: Response) {
     try {
-      const user = await this.createUserUseCase.execute(req.body)
+      // Get authenticated user ID from middleware (if authenticated)
+      const requestingUserId = req.user?.id
+
+      const user = await this.createUserUseCase.execute(
+        req.body,
+        requestingUserId,
+      )
 
       return res.status(201).json({
         message: 'User created successfully',

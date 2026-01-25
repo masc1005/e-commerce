@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run db:migrate && node dist/index.js"]
+CMD ["sh", "-c", "npm run db:migrate && npm run db:seed && node dist/index.js"]

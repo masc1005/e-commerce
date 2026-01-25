@@ -4,7 +4,20 @@ paths:
       tags:
         - Users
       summary: Criar novo usuário
-      description: Cria um novo usuário do tipo admin ou client. Admin só pode ser criado por outro admin.
+      description: |
+        Cria um novo usuário. 
+        
+        **Regras de segurança:**
+        - Usuários não autenticados podem se registrar, mas sempre como tipo 'client'
+        - Para criar um usuário tipo 'admin', é necessário estar autenticado como admin
+        - Tentativas de criar admin sem autorização serão bloqueadas
+        
+        **Signup público:** Enviar request sem token de autenticação criará automaticamente um cliente.
+        
+        **Criação de admin:** Requer token Bearer de um usuário admin existente.
+      security:
+        - bearerAuth: []
+        - {}
       requestBody:
         required: true
         content:
@@ -12,10 +25,13 @@ paths:
             schema:
               type: object
               required:
+                - name
                 - email
                 - password
-                - type
               properties:
+                name:
+                  type: string
+                  example: João Silva
                 email:
                   type: string
                   format: email
@@ -28,6 +44,7 @@ paths:
                   type: string
                   enum: [admin, client]
                   example: client
+                  description: Tipo do usuário. 'admin' só pode ser criado por outro admin autenticado.
       responses:
         '201':
           description: Usuário criado com sucesso
@@ -41,7 +58,7 @@ paths:
                   data:
                     $ref: '#/components/schemas/User'
         '400':
-          description: Dados inválidos
+          description: Dados inválidos ou tentativa de criar admin sem autorização
           content:
             application/json:
               schema:
